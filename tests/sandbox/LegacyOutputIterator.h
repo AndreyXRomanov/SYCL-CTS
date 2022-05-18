@@ -15,7 +15,7 @@ template <typename It>
 void check_legacy_output_iterator_requirement(It valid_iterator,
                                               const size_t size_of_container,
                                               const std::string type_name) {
-  INFO("Verify named requiremnt Legacy Output Iterator for: " + type_name);
+  INFO("Verify named requirement Legacy Output Iterator for: " + type_name);
   if (size_of_container < 2) {
     INFO("Container, that iterator belongs to, have to be at least size of 2");
     CHECK(false);

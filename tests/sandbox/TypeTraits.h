@@ -32,62 +32,74 @@ template <typename T>
 inline constexpr bool is_equality_comparable_v =
     is_equality_comparable<T>::value;
 ////////////////////////////////////////////////////
+namespace has_field {
 template <typename T, typename = void>
-struct has_value_type_field : std::false_type {};
+struct value_type : std::false_type {};
 
 template <typename T>
-struct has_value_type_field<
-    T, std::void_t<typename std::iterator_traits<T>::value_type>>
+struct value_type<T, std::void_t<typename std::iterator_traits<T>::value_type>>
     : std::true_type {};
 
 template <typename T>
-using has_value_type_field_t = typename has_value_type_field<T>::type;
+using value_type_t = typename value_type<T>::type;
 
 template <typename T>
-inline constexpr bool has_value_type_field_v = has_value_type_field<T>::value;
+inline constexpr bool value_type_v = value_type<T>::value;
 
 template <typename T, typename = void>
-struct has_difference_type_field : std::false_type {};
+struct difference_type : std::false_type {};
 
 template <typename T>
-struct has_difference_type_field<
+struct difference_type<
     T, std::void_t<typename std::iterator_traits<T>::difference_type>>
     : std::true_type {};
 
 template <typename T>
-using has_difference_type_field_t = typename has_difference_type_field<T>::type;
+using difference_type_t = typename difference_type<T>::type;
 
 template <typename T>
-inline constexpr bool has_difference_type_field_v =
-    has_difference_type_field<T>::value;
+inline constexpr bool difference_type_v = difference_type<T>::value;
 
 template <typename T, typename = void>
-struct has_reference_field : std::false_type {};
+struct reference : std::false_type {};
 
 template <typename T>
-struct has_reference_field<
-    T, std::void_t<typename std::iterator_traits<T>::reference>>
+struct reference<T, std::void_t<typename std::iterator_traits<T>::reference>>
     : std::true_type {};
 
 template <typename T>
-using has_reference_field_t = typename has_reference_field<T>::type;
+using reference_t = typename reference<T>::type;
 
 template <typename T>
-inline constexpr bool has_reference_field_v = has_reference_field<T>::value;
+inline constexpr bool reference_v = reference<T>::value;
 
 template <typename T, typename = void>
-struct has_pointer_field : std::false_type {};
+struct pointer : std::false_type {};
 
 template <typename T>
-struct has_pointer_field<T,
+struct pointer<T, std::void_t<typename std::iterator_traits<T>::pointer>>
+    : std::true_type {};
+
+template <typename T>
+using pointer_t = typename pointer<T>::type;
+
+template <typename T>
+inline constexpr bool pointer_v = pointer<T>::value;
+
+template <typename T, typename = void>
+struct iterator_category : std::false_type {};
+
+template <typename T>
+struct iterator_category<T,
                          std::void_t<typename std::iterator_traits<T>::pointer>>
     : std::true_type {};
 
 template <typename T>
-using has_pointer_field_t = typename has_pointer_field<T>::type;
+using iterator_category_t = typename iterator_category<T>::type;
 
 template <typename T>
-inline constexpr bool has_pointer_field_v = has_pointer_field<T>::value;
+inline constexpr bool iterator_category_v = iterator_category<T>::value;
+}  // namespace has_field
 ////////////////////////////////////////////////////
 
 template <typename T, typename = void>

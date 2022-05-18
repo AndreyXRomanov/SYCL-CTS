@@ -44,19 +44,23 @@ void check_legacy_iterator_requirement(It valid_iterator,
 
   {
     INFO("Iterator have to have value_type member typedef");
-    CHECK(type_traits::has_value_type_field_v<It>);
+    CHECK(type_traits::has_field::value_type_v<It>);
   }
   {
     INFO("Iterator have to have difference_type member typedef");
-    CHECK(type_traits::has_difference_type_field_v<It>);
+    CHECK(type_traits::has_field::difference_type_v<It>);
   }
   {
     INFO("Iterator have to have reference member typedef");
-    CHECK(type_traits::has_reference_field_v<It>);
+    CHECK(type_traits::has_field::reference_v<It>);
   }
   {
     INFO("Iterator have to have pointer member typedef");
-    CHECK(type_traits::has_pointer_field_v<It>);
+    CHECK(type_traits::has_field::pointer_v<It>);
+  }
+  {
+    INFO("Iterator have to have iterator_category member typedef");
+    CHECK(type_traits::has_field::iterator_category_v<It>);
   }
 
   {
@@ -65,7 +69,9 @@ void check_legacy_iterator_requirement(It valid_iterator,
     if constexpr (type_traits::can_pre_increment_v<It>) {
       INFO("Have to be return reference after using prefix increment operator");
       It lval = valid_iterator;
+      // decltype(++declval<std::add_lvalue_reference_t<It>>());
       CHECK(std::is_same_v<decltype(++lval), It&>);
+      CHECK(std::is_same_v<decltype(++std::declval<It>()), It&>);
     }
   }
 
