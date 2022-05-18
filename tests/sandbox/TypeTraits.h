@@ -33,6 +33,7 @@ inline constexpr bool is_equality_comparable_v =
     is_equality_comparable<T>::value;
 ////////////////////////////////////////////////////
 namespace has_field {
+
 template <typename T, typename = void>
 struct value_type : std::false_type {};
 
@@ -99,6 +100,7 @@ using iterator_category_t = typename iterator_category<T>::type;
 
 template <typename T>
 inline constexpr bool iterator_category_v = iterator_category<T>::value;
+
 }  // namespace has_field
 ////////////////////////////////////////////////////
 

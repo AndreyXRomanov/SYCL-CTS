@@ -16,14 +16,7 @@ void check_legacy_iterator_requirement(It valid_iterator,
                                        const size_t size_of_container,
                                        const std::string& type_name) {
   INFO("Verify named requiremnt Legacy Iterator: " + type_name);
-
   STATIC_CHECK(!std::is_same_v<It, void>);
-
-  if (size_of_container < 2) {
-    INFO("Container, that iterator belongs to, have to be at least size of 2");
-    CHECK(false);
-    return;
-  }
 
   {
     INFO("Iterator have to be copy constructble");
@@ -41,7 +34,6 @@ void check_legacy_iterator_requirement(It valid_iterator,
     INFO("Iterator have to be swappable");
     CHECK(std::is_swappable_v<It>);
   }
-
   {
     INFO("Iterator have to have value_type member typedef");
     CHECK(type_traits::has_field::value_type_v<It>);
@@ -63,7 +55,13 @@ void check_legacy_iterator_requirement(It valid_iterator,
     CHECK(type_traits::has_field::iterator_category_v<It>);
   }
 
-  {
+  // Size of container have to be > 1
+  if (size_of_container < 2) {
+    INFO(
+        "Some test requires conteiner size that not lower than 2, so they will "
+        "be skipped");
+    CHECK(false);
+  } else {
     INFO("Iterator have to implement prefix increment operator");
     CHECK(type_traits::can_pre_increment_v<It>);
     if constexpr (type_traits::can_pre_increment_v<It>) {
