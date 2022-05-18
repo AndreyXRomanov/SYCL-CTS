@@ -65,15 +65,15 @@ void check_legacy_input_iterator_requirement(It valid_iterator,
       INFO(
           "Two not equal iterators have to return true with NOT EQUAL "
           "operator");
-      CHECK(i != j);
-      CHECK(!(i == j));
+      CHECK((i != j));
+      CHECK((!(i == j)));
     }
     {
       INFO(
           "Two not equal iterators have to return implicit convertble to "
           "bool value with NOT EQUAL operator");
-      CHECK(std::is_convertible_v<decltype((i != j)), bool>);
-      CHECK(std::is_convertible_v<decltype((i == j)), bool>);
+      CHECK((std::is_convertible_v<decltype((i != j)), bool>));
+      CHECK((std::is_convertible_v<decltype((i == j)), bool>));
     }
     {
       It i = valid_iterator;
@@ -82,17 +82,17 @@ void check_legacy_input_iterator_requirement(It valid_iterator,
         INFO(
             "Iterator have to return reference when called dereference "
             "operator");
-        CHECK(std::is_same_v<decltype(*i), reference_t>);
+        CHECK((std::is_same_v<decltype(*i), reference_t>));
 
         // If i == j and (i, j) is in the domain of == then this is equivalent
         // to *j
-        CHECK(std::is_same_v<decltype(*j), reference_t>);
+        CHECK((std::is_same_v<decltype(*j), reference_t>));
       }
       {
         INFO(
             "Iterator dereference result have to be convertble to "
             "value_type");
-        CHECK(std::is_convertible_v<decltype(*i), value_t>);
+        CHECK((std::is_convertible_v<decltype(*i), value_t>));
       }
     }
 
@@ -101,14 +101,13 @@ void check_legacy_input_iterator_requirement(It valid_iterator,
       INFO(
           "Iterator have to return reference after usage of prefix increment "
           "operator");
-      CHECK(std::is_same_v<decltype(++i), It&>);
+      CHECK((std::is_same_v<decltype(++i), It&>));
     }
 
     {
       INFO("Iterator expression *i++ have to be convertble to value_type");
-      CHECK(
-          std::is_convertible_v<decltype(*i++),
-                                typename std::iterator_traits<It>::value_type>);
+      CHECK((std::is_convertible_v<
+             decltype(*i++), typename std::iterator_traits<It>::value_type>));
     }
   }
 }

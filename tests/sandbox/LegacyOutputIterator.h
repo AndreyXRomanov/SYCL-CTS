@@ -47,7 +47,7 @@ void check_legacy_output_iterator_requirement(It valid_iterator,
     {
       INFO("Dereferenced iterator have to be assignble with value_t");
       It r = valid_iterator;
-      CHECK(std::is_assignable_v<decltype(*r), value_t>);
+      CHECK((std::is_assignable_v<decltype(*r), value_t>));
     }
 
     {
@@ -55,13 +55,13 @@ void check_legacy_output_iterator_requirement(It valid_iterator,
           "Iterator have to return reference after usage of prefix increment "
           "operator");
       It r = valid_iterator;
-      CHECK(std::is_same_v<decltype(++r), It &>);
+      CHECK((std::is_same_v<decltype(++r), It &>));
     }
 
     {
       INFO("Iterator have to be convertble to const It after increment");
       It r = valid_iterator;
-      CHECK(std::is_convertible_v<decltype(++r), const It>);
+      CHECK((std::is_convertible_v<decltype(++r), const It>));
     }
 
     {
@@ -69,12 +69,12 @@ void check_legacy_output_iterator_requirement(It valid_iterator,
           "Iterator have to be assignable with value_t after increment and "
           "dereferencing");
       It r = valid_iterator;
-      CHECK(std::is_assignable_v<decltype(*r++), value_t>);
+      CHECK((std::is_assignable_v<decltype(*r++), value_t>));
     }
     {
       INFO("Iterator have to be assignable with value_t after dereferencing");
       It r = valid_iterator;
-      CHECK(std::is_assignable_v<decltype(*r), value_t>);
+      CHECK((std::is_assignable_v<decltype(*r), value_t>));
     }
   }
 }

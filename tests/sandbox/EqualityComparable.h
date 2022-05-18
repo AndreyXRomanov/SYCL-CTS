@@ -44,10 +44,10 @@ void check_equality_comparable_requirement(It valid_iterator,
       INFO(
           "Non-const copies of one object returns convertble to bool value "
           "after compairing");
-      CHECK(std::is_convertible_v<decltype((a == b)), bool>);
-      CHECK(std::is_convertible_v<decltype((b == a)), bool>);
-      CHECK(std::is_convertible_v<decltype((b == c)), bool>);
-      CHECK(std::is_convertible_v<decltype((a == c)), bool>);
+      CHECK((std::is_convertible_v<decltype((a == b)), bool>));
+      CHECK((std::is_convertible_v<decltype((b == a)), bool>));
+      CHECK((std::is_convertible_v<decltype((b == c)), bool>));
+      CHECK((std::is_convertible_v<decltype((a == c)), bool>));
     }
 
     {
@@ -61,10 +61,10 @@ void check_equality_comparable_requirement(It valid_iterator,
       INFO(
           "Const copies of one object returns convertble to bool value after "
           "compairing");
-      CHECK(std::is_convertible_v<decltype((const_a == const_b)), bool>);
-      CHECK(std::is_convertible_v<decltype((const_b == const_c)), bool>);
-      CHECK(std::is_convertible_v<decltype((const_a == const_c)), bool>);
-      CHECK(std::is_convertible_v<decltype((const_b == const_a)), bool>);
+      CHECK((std::is_convertible_v<decltype((const_a == const_b)), bool>));
+      CHECK((std::is_convertible_v<decltype((const_b == const_c)), bool>));
+      CHECK((std::is_convertible_v<decltype((const_a == const_c)), bool>));
+      CHECK((std::is_convertible_v<decltype((const_b == const_a)), bool>));
     }
   }
 }
