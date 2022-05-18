@@ -1,9 +1,15 @@
 // FIXME remove pragma after moving to cts
 #pragma once
 
-#include "common.h"
+#include "../common/common.h"
 
+#include "TypeTraits.h"
 
+#include <chrono>
+#include <iostream>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 template <typename It>
 void check_equality_comparable_requirement(It valid_iterator,
