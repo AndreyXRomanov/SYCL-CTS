@@ -54,27 +54,32 @@ TEST_CASE("Equal operator") {
 
 TEST_CASE("Legacy iterator check") {
   std::vector v{1, 2, 3};
-  check_legacy_iterator_requirement(v.begin(), v.size(),
-                                    "vector<int>::iterator");
+  legacy_iterator_requirement<std::vector<int>::iterator>{}.check(
+      "vector<int>::iterator");
+
   UserDefinedIterator user_iterator{1, 2, 3};
-  check_legacy_iterator_requirement(user_iterator, 3, "UserDefinedIterator");
+  legacy_iterator_requirement<UserDefinedIterator>{}.check(
+      "UserDefinedIterator");
 }
 
 TEST_CASE("Legacy input iterator check") {
   std::vector v{1, 2, 3};
-  check_legacy_input_iterator_requirement(v.begin(), v.size(),
-                                          "vector<int>::iterator");
+  legacy_input_iterator_requirement<std::vector<int>::iterator>{}.check(
+      "vector<int>::iterator");
+
+  legacy_input_iterator_requirement<UserDefinedIterator>{}.check(
+      "UserDefinedIterator");
   UserDefinedIterator inst{1, 2, 3};
-  check_legacy_input_iterator_requirement(inst, 3, "UserDefinedIterator");
 }
 
 TEST_CASE("Equality comparable check") {
   std::vector v{1, 2, 3, 4, 5};
-  check_equality_comparable_requirement(v.begin(), "vector<int>::iterator");
+  equality_comparable_requirement<std::vector<int>::iterator>{}.check(
+      "vector<int>::iterator");
 }
 
 TEST_CASE("Legacy output iterator check") {
   std::vector v{1, 2, 3, 4, 5};
-  check_legacy_output_iterator_requirement(v.begin(), v.size(),
-                                           "vector<int>::iterator");
+  legacy_output_iterator_requirement<std::vector<int>::iterator>{}.check(
+      "vector<int>::iterator");
 }

@@ -4,6 +4,7 @@
 #include "../common/common.h"
 
 #include "TypeTraits.h"
+#include "common.h"
 
 #include <chrono>
 #include <iostream>
@@ -12,69 +13,60 @@
 #include <vector>
 
 template <typename It>
-void check_legacy_iterator_requirement(It valid_iterator,
-                                       const size_t size_of_container,
-                                       const std::string& type_name) {
-  INFO("Verify named requiremnt Legacy Iterator: " + type_name);
-  STATIC_CHECK(!std::is_same_v<It, void>);
-
-  {
-    INFO("Iterator have to be copy constructble");
-    CHECK(std::is_copy_constructible_v<It>);
-  }
-  {
-    INFO("Iterator have to be copy assignble");
-    CHECK(std::is_copy_assignable_v<It>);
-  }
-  {
-    INFO("Iterator have to be destrcutble");
-    CHECK(std::is_destructible_v<It>);
-  }
-  {
-    INFO("Iterator have to be swappable");
-    CHECK(std::is_swappable_v<It>);
-  }
-  {
-    INFO("Iterator have to have value_type member typedef");
-    CHECK(type_traits::has_field::value_type_v<It>);
-  }
-  {
-    INFO("Iterator have to have difference_type member typedef");
-    CHECK(type_traits::has_field::difference_type_v<It>);
-  }
-  {
-    INFO("Iterator have to have reference member typedef");
-    CHECK(type_traits::has_field::reference_v<It>);
-  }
-  {
-    INFO("Iterator have to have pointer member typedef");
-    CHECK(type_traits::has_field::pointer_v<It>);
-  }
-  {
-    INFO("Iterator have to have iterator_category member typedef");
-    CHECK(type_traits::has_field::iterator_category_v<It>);
-  }
-
-  // Size of container have to be > 1
-  if (size_of_container < 2) {
-    INFO(
-        "Some test requires conteiner size that not lower than 2, so they will "
-        "be skipped");
-    CHECK(false);
-  } else {
-    INFO("Iterator have to implement prefix increment operator");
-    CHECK(type_traits::can_pre_increment_v<It>);
-    if constexpr (type_traits::can_pre_increment_v<It>) {
-      INFO("Have to be return reference after using prefix increment operator");
-      It lval = valid_iterator;
-      // decltype(++declval<std::add_lvalue_reference_t<It>>());
-      CHECK(std::is_same_v<decltype(++lval), It&>);
-      CHECK(std::is_same_v<decltype(++std::declval<It>()), It&>);
+class legacy_iterator_requirement : requirement_verifier {
+ public:
+  bool check(const std::string& type_name) {
+    INFO("Verify named requiremnt Legacy Iterator: " + type_name);
+    STATIC_CHECK(!std::is_same_v<It, void>);
+    {
+      INFO("Iterator have to be copy constructble");
+      verify(std::is_copy_constructible_v<It>);
     }
-  }
+    {
+      INFO("Iterator have to be copy assignble");
+      verify(std::is_copy_assignable_v<It>);
+    }
+    {
+      INFO("Iterator have to be destrcutble");
+      verify(std::is_destructible_v<It>);
+    }
+    {
+      INFO("Iterator have to be swappable");
+      verify(std::is_swappable_v<It>);
+    }
+    {
+      INFO("Iterator have to have value_type member typedef");
+      verify(type_traits::has_field::value_type_v<It>);
+    }
+    {
+      INFO("Iterator have to have difference_type member typedef");
+      verify(type_traits::has_field::difference_type_v<It>);
+    }
+    {
+      INFO("Iterator have to have reference member typedef");
+      verify(type_traits::has_field::reference_v<It>);
+    }
+    {
+      INFO("Iterator have to have pointer member typedef");
+      verify(type_traits::has_field::pointer_v<It>);
+    }
+    {
+      INFO("Iterator have to have iterator_category member typedef");
+      verify(type_traits::has_field::iterator_category_v<It>);
+    }
+    {
+      INFO("Iterator have to implement prefix increment operator");
+      verify(type_traits::can_pre_increment_v<It>);
+    }
+    if constexpr (type_traits::can_pre_increment_v<It>) {
+      INFO("Have to return reference after using prefix increment operator");
+      verify(std::is_same_v<decltype(++std::declval<It>()), It&>);
+    }
+    {
+      INFO("Iterator have to be dereferenceble");
+      verify(type_traits::is_dereferenceable_v<It>);
+    }
 
-  {
-    INFO("Iterator have to be dereferenceble");
-    CHECK(type_traits::is_dereferenceable_v<It>);
+    return _verification_result;
   }
-}
+};

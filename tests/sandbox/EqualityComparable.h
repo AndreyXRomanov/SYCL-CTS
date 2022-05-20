@@ -4,6 +4,7 @@
 #include "../common/common.h"
 
 #include "TypeTraits.h"
+#include "common.h"
 
 #include <chrono>
 #include <iostream>
@@ -12,59 +13,63 @@
 #include <vector>
 
 template <typename It>
-void check_equality_comparable_requirement(It valid_iterator,
-                                           const std::string& type_name) {
-  INFO("Verify named requiremnt Equality Comparable for: " + type_name);
+class equality_comparable_requirement : requirement_verifier {
+ public:
+  bool check(const std::string& type_name) {
+    INFO("Verify named requiremnt Equality Comparable for: " + type_name);
 
-  STATIC_CHECK(!std::is_same_v<It, void>);
+    STATIC_CHECK(!std::is_same_v<It, void>);
 
-  {
-    INFO("Have to be able to be compared with equal operator");
-    CHECK(type_traits::is_equality_comparable_v<It>);
+    {
+      INFO("Have to be able to be compared with equal operator");
+      verify(type_traits::is_equality_comparable_v<It>);
+    }
+
+    // It will delete branch from code in compile time to not fail a compilation
+    if constexpr (type_traits::is_equality_comparable_v<It>) {
+      It a;
+      It b;
+      It c;
+      const It const_a;
+      const It const_b;
+      const It const_c;
+
+      {
+        INFO(
+            "Non-const copies of one object are actually equal during "
+            "comparing");
+        verify(a == b);
+        verify(b == a);
+        verify(b == c);
+        verify(a == c);
+      }
+      {
+        INFO(
+            "Non-const copies of one object returns convertble to bool value "
+            "after compairing");
+        verify(std::is_convertible_v<decltype((a == b)), bool>);
+        verify(std::is_convertible_v<decltype((b == a)), bool>);
+        verify(std::is_convertible_v<decltype((b == c)), bool>);
+        verify(std::is_convertible_v<decltype((a == c)), bool>);
+      }
+
+      {
+        INFO("Const copies of one object are actually equal during comparing");
+        verify(const_a == const_b);
+        verify(const_b == const_c);
+        verify(const_a == const_c);
+        verify(const_b == const_a);
+      }
+      {
+        INFO(
+            "Const copies of one object returns convertble to bool value after "
+            "compairing");
+        verify(std::is_convertible_v<decltype((const_a == const_b)), bool>);
+        verify(std::is_convertible_v<decltype((const_b == const_c)), bool>);
+        verify(std::is_convertible_v<decltype((const_a == const_c)), bool>);
+        verify(std::is_convertible_v<decltype((const_b == const_a)), bool>);
+      }
+    }
+    return _verification_result;
   }
-
-  // It will delete branch from code in compile time to not fail a compilation
-  if constexpr (type_traits::is_equality_comparable_v<It>) {
-    It a = valid_iterator;
-    It b = valid_iterator;
-    It c = valid_iterator;
-    const It const_a = valid_iterator;
-    const It const_b = valid_iterator;
-    const It const_c = valid_iterator;
-
-    {
-      INFO(
-          "Non-const copies of one object are actually equal during comparing");
-      CHECK(a == b);
-      CHECK(b == a);
-      CHECK(b == c);
-      CHECK(a == c);
-    }
-    {
-      INFO(
-          "Non-const copies of one object returns convertble to bool value "
-          "after compairing");
-      CHECK((std::is_convertible_v<decltype((a == b)), bool>));
-      CHECK((std::is_convertible_v<decltype((b == a)), bool>));
-      CHECK((std::is_convertible_v<decltype((b == c)), bool>));
-      CHECK((std::is_convertible_v<decltype((a == c)), bool>));
-    }
-
-    {
-      INFO("Const copies of one object are actually equal during comparing");
-      CHECK(const_a == const_b);
-      CHECK(const_b == const_c);
-      CHECK(const_a == const_c);
-      CHECK(const_b == const_a);
-    }
-    {
-      INFO(
-          "Const copies of one object returns convertble to bool value after "
-          "compairing");
-      CHECK((std::is_convertible_v<decltype((const_a == const_b)), bool>));
-      CHECK((std::is_convertible_v<decltype((const_b == const_c)), bool>));
-      CHECK((std::is_convertible_v<decltype((const_a == const_c)), bool>));
-      CHECK((std::is_convertible_v<decltype((const_b == const_a)), bool>));
-    }
-  }
-}
+};
