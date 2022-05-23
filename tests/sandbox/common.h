@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../common/common.h"
+
 class requirement_verifier {
  protected:
   bool m_verification_result = true;
