@@ -129,4 +129,30 @@ using can_post_increment_t = typename can_post_increment<T>::type;
 
 template <typename T>
 inline constexpr bool can_post_increment_v = can_post_increment<T>::value;
+
+template <typename T, typename = void>
+struct can_post_decrement : std::false_type {};
+
+template <typename T>
+struct can_post_decrement<T, std::void_t<decltype(std::declval<T>()--)>>
+    : std::true_type {};
+
+template <typename T>
+using can_post_decrement_t = typename can_post_decrement<T>::type;
+
+template <typename T>
+inline constexpr bool can_post_decrement_v = can_post_decrement<T>::value;
+
+template <typename T, typename = void>
+struct can_pre_decrement : std::false_type {};
+
+template <typename T>
+struct can_pre_decrement<T, std::void_t<decltype(--(std::declval<T>()))>>
+    : std::true_type {};
+
+template <typename T>
+using can_pre_decrement_t = typename can_pre_decrement<T>::type;
+
+template <typename T>
+inline constexpr bool can_pre_decrement_v = can_pre_decrement<T>::value;
 }  // namespace type_traits

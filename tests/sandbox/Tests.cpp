@@ -3,6 +3,8 @@
 #include <vector>
 
 #include "EqualityComparable.h"
+#include "LegacyBidirectionalIterator.h"
+#include "LegacyForwardIterator.h"
 #include "LegacyInputIterator.h"
 #include "LegacyIterator.h"
 #include "LegacyOutputIterator.h"
@@ -82,4 +84,16 @@ TEST_CASE("Legacy output iterator check") {
   std::vector v{1, 2, 3, 4, 5};
   legacy_output_iterator_requirement<std::vector<int>::iterator>{}.check(
       "vector<int>::iterator");
+}
+
+TEST_CASE("Legacy forward iterator check") {
+  std::vector v{1, 2, 3, 4, 5};
+  legacy_forward_iterator_requirement<std::vector<int>::iterator>{}.check(
+      v.begin(), v.size(), "vector<int>::iterator");
+}
+
+TEST_CASE("Legacy biderectional iterator check") {
+  std::vector v{1, 2, 3, 4, 5};
+  legacy_bidirectional_iterator_requirement<std::vector<int>::iterator>{}.check(
+      v.begin(), v.size(), "vector<int>::iterator");
 }
