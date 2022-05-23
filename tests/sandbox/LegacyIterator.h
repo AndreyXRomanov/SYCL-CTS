@@ -67,6 +67,6 @@ class legacy_iterator_requirement : requirement_verifier {
       verify(type_traits::is_dereferenceable_v<It>);
     }
 
-    return _verification_result;
+    return m_verification_result;
   }
 };

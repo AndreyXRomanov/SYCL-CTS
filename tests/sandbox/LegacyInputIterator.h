@@ -95,6 +95,6 @@ class legacy_input_iterator_requirement : requirement_verifier {
       verify(std::is_convertible_v<decltype(*std::declval<It>()),
                                    typename it_traits::value_type>);
     }
-    return _verification_result;
+    return m_verification_result;
   }
 };

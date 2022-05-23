@@ -70,6 +70,6 @@ class equality_comparable_requirement : requirement_verifier {
         verify(std::is_convertible_v<decltype((const_b == const_a)), bool>);
       }
     }
-    return _verification_result;
+    return m_verification_result;
   }
 };

@@ -84,6 +84,6 @@ class legacy_output_iterator_requirement : requirement_verifier {
                                   typename it_traits::value_type>);
     }
 
-    return _verification_result;
+    return m_verification_result;
   }
 };
