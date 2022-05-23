@@ -31,15 +31,18 @@ class legacy_forward_iterator_requirement : requirement_verifier {
 
     {
       INFO("Verify optional legacy iterator requirements");
-
-      if (legacy_output_iterator_requirement<It>{}.check(type_name)) {
+      // Required silent output because this is an optional requirement, so
+      // verification on legacy_output_iterator_requirement could fail without
+      // any error messages
+      bool silent_output = true;
+      if (legacy_output_iterator_requirement<It>{}.check(type_name,
+                                                         silent_output)) {
         INFO("Provided iterator satisfied to legacy output iterator "
-            "requirements. Verify that iterator reference is non const");
+             "requirements. Verify that iterator reference is non const");
         verify(!std::is_const_v<iterator_reference>);
       } else {
-        INFO(
-            "Provided iterator satisfied to legacy output iterator "
-            "requirements. Verify that iterator reference is const");
+        INFO("Provided iterator satisfied to legacy output iterator "
+             "requirements. Verify that iterator reference is const");
         verify(std::is_const_v<iterator_reference>);
       }
     }

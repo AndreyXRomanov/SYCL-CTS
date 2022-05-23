@@ -15,7 +15,7 @@
 template <typename It>
 class legacy_output_iterator_requirement : requirement_verifier {
  public:
-  bool check(const std::string type_name) {
+  bool check(const std::string type_name, bool silence_output = false) {
     INFO("Verify named requirement Legacy Output Iterator for: " + type_name);
 
     STATIC_CHECK(!std::is_same_v<It, void>);
@@ -35,16 +35,16 @@ class legacy_output_iterator_requirement : requirement_verifier {
 
     {
       INFO("Iterator have to be dereferenceable");
-      verify(is_dereferenceable);
+      verify(is_dereferenceable, silence_output);
     }
     {
       INFO("Iterator have to implement prefix and postfix increment operator");
-      verify(can_pre_increment);
-      verify(can_post_increment);
+      verify(can_pre_increment, silence_output);
+      verify(can_post_increment, silence_output);
     }
     {
       INFO("Iterator have to implement std::iterator_traits<It>::value_type");
-      verify(has_value_type_member);
+      verify(has_value_type_member, silence_output);
     }
 
     using it_traits = std::iterator_traits<It>;
@@ -52,7 +52,7 @@ class legacy_output_iterator_requirement : requirement_verifier {
     if constexpr (has_value_type_member && is_dereferenceable) {
       INFO("Dereferenced iterator have to be assignble with value_t");
       verify(std::is_assignable_v<decltype(*std::declval<It>()),
-                                  typename it_traits::value_type>);
+                                  typename it_traits::value_type>, silence_output);
     }
 
     if constexpr (can_pre_increment) {
@@ -61,11 +61,11 @@ class legacy_output_iterator_requirement : requirement_verifier {
             "Iterator have to return reference after usage of prefix "
             "increment "
             "operator");
-        verify(std::is_same_v<decltype(++std::declval<It>()), It &>);
+        verify(std::is_same_v<decltype(++std::declval<It>()), It &>, silence_output);
       }
       {
         INFO("Iterator have to be convertble to const It after increment");
-        verify(std::is_convertible_v<decltype(++std::declval<It>()), const It>);
+        verify(std::is_convertible_v<decltype(++std::declval<It>()), const It>, silence_output);
       }
     }
 
@@ -75,13 +75,13 @@ class legacy_output_iterator_requirement : requirement_verifier {
           "Iterator have to be assignable with value_t after increment and "
           "dereferencing");
       verify(std::is_assignable_v<decltype(*(std::declval<It>()++)),
-                                  typename it_traits::value_type>);
+                                  typename it_traits::value_type>, silence_output);
     }
 
     if constexpr (is_dereferenceable && has_value_type_member) {
       INFO("Iterator have to be assignable with value_t after dereferencing");
       verify(std::is_assignable_v<decltype(*std::declval<It>()),
-                                  typename it_traits::value_type>);
+                                  typename it_traits::value_type>, silence_output);
     }
 
     return m_verification_result;
