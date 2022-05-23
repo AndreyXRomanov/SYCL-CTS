@@ -73,6 +73,13 @@ class legacy_input_iterator_requirement : requirement_verifier {
       verify(std::is_convertible_v<decltype(!(i == j)), bool>);
     }
 
+    if constexpr (can_pre_increment) {
+      INFO(
+          "Iterator have to return reference after usage of prefix increment "
+          "operator");
+      verify((std::is_same_v<decltype(++std::declval<It>()), It&>));
+    }
+
     using it_traits = std::iterator_traits<It>;
 
     if constexpr (is_dereferenceable && can_post_increment &&
