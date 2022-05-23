@@ -26,12 +26,14 @@ class legacy_input_iterator_requirement : requirement_verifier {
           type_name);
       verify(legacy_iterator_requirement<It>{}.check(type_name), true);
     }
-    // check_equality_comparable_requirement(type_name);
+
     constexpr bool is_dereferenceable = type_traits::is_dereferenceable_v<It>;
     constexpr bool can_pre_increment = type_traits::can_pre_increment_v<It>;
     constexpr bool can_post_increment = type_traits::can_post_increment_v<It>;
-    constexpr bool has_reference_t = type_traits::has_field::reference_v<It>;
-    constexpr bool has_value_type_t = type_traits::has_field::value_type_v<It>;
+    constexpr bool has_reference_member =
+        type_traits::has_field::reference_v<It>;
+    constexpr bool has_value_type_member =
+        type_traits::has_field::value_type_v<It>;
 
     {
       INFO("Iterator have to be dereferenceable");
@@ -47,8 +49,8 @@ class legacy_input_iterator_requirement : requirement_verifier {
       INFO(
           "Iterator have to implement std::iterator_traits<It>::reference and "
           "std::iterator_traits<It>::value_type");
-      verify(has_reference_t);
-      verify(has_value_type_t);
+      verify(has_reference_member);
+      verify(has_value_type_member);
     }
 
     It j{};
@@ -74,19 +76,19 @@ class legacy_input_iterator_requirement : requirement_verifier {
     using it_traits = std::iterator_traits<It>;
 
     if constexpr (is_dereferenceable && can_post_increment &&
-                  has_value_type_t) {
+                  has_value_type_member) {
       INFO("Iterator expression *i++ have to be convertble to value_type");
       verify(std::is_convertible_v<decltype(*(std::declval<It>()++)),
                                    typename it_traits::value_type>);
     }
-    if constexpr (is_dereferenceable && has_reference_t) {
+    if constexpr (is_dereferenceable && has_reference_member) {
       INFO(
           "Iterator have to return reference when called dereference "
           "operator");
       verify(std::is_same_v<decltype(*std::declval<It>()),
                             typename it_traits::reference>);
     }
-    if constexpr (is_dereferenceable && has_value_type_t) {
+    if constexpr (is_dereferenceable && has_value_type_member) {
       INFO(
           "Iterator dereference result have to be convertble to "
           "value_type");
