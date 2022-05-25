@@ -8,6 +8,7 @@
 #include "LegacyInputIterator.h"
 #include "LegacyIterator.h"
 #include "LegacyOutputIterator.h"
+#include "LegacyRandomAccessIterator.h"
 
 class EqualOpImplemented {
  public:
@@ -95,5 +96,11 @@ TEST_CASE("Legacy forward iterator check") {
 TEST_CASE("Legacy biderectional iterator check") {
   std::vector v{1, 2, 3, 4, 5};
   legacy_bidirectional_iterator_requirement<std::vector<int>::iterator>{}.check(
+      v.begin(), v.size(), "vector<int>::iterator");
+}
+
+TEST_CASE("Legacy random access iterator check") {
+  std::vector v{1, 2, 3, 4, 5};
+  legacy_random_access_iterator_requirement<std::vector<int>::iterator>{}.check(
       v.begin(), v.size(), "vector<int>::iterator");
 }
