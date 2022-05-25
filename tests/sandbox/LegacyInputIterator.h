@@ -24,7 +24,8 @@ class legacy_input_iterator_requirement : requirement_verifier {
           "Iterator have to satisfy Legacy iterator requirement. Testing "
           "type: " +
           type_name);
-      verify(legacy_iterator_requirement<It>{}.check(type_name), true);
+      constexpr bool silent_output = true;
+      verify(legacy_iterator_requirement<It>{}.check(type_name), silent_output);
     }
 
     constexpr bool is_dereferenceable = type_traits::is_dereferenceable_v<It>;
