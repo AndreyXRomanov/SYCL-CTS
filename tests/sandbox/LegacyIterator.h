@@ -56,9 +56,9 @@ class legacy_iterator_requirement : requirement_verifier {
     }
     {
       INFO("Iterator have to implement prefix increment operator");
-      verify(type_traits::can_pre_increment_v<It>);
+      verify(type_traits::has_arithmetic::pre_increment_v<It>);
     }
-    if constexpr (type_traits::can_pre_increment_v<It>) {
+    if constexpr (type_traits::has_arithmetic::pre_increment_v<It>) {
       INFO("Have to return reference after using prefix increment operator");
       verify(std::is_same_v<decltype(++std::declval<It>()), It&>);
     }

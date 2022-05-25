@@ -28,8 +28,10 @@ class legacy_output_iterator_requirement : requirement_verifier {
     }
 
     constexpr bool is_dereferenceable = type_traits::is_dereferenceable_v<It>;
-    constexpr bool can_pre_increment = type_traits::can_pre_increment_v<It>;
-    constexpr bool can_post_increment = type_traits::can_post_increment_v<It>;
+    constexpr bool can_pre_increment =
+        type_traits::has_arithmetic::pre_increment_v<It>;
+    constexpr bool can_post_increment =
+        type_traits::has_arithmetic::post_increment_v<It>;
     constexpr bool has_value_type_member =
         type_traits::has_field::value_type_v<It>;
 
@@ -52,7 +54,8 @@ class legacy_output_iterator_requirement : requirement_verifier {
     if constexpr (has_value_type_member && is_dereferenceable) {
       INFO("Dereferenced iterator have to be assignble with value_t");
       verify(std::is_assignable_v<decltype(*std::declval<It>()),
-                                  typename it_traits::value_type>, silence_output);
+                                  typename it_traits::value_type>,
+             silence_output);
     }
 
     if constexpr (can_pre_increment) {
@@ -61,11 +64,13 @@ class legacy_output_iterator_requirement : requirement_verifier {
             "Iterator have to return reference after usage of prefix "
             "increment "
             "operator");
-        verify(std::is_same_v<decltype(++std::declval<It>()), It &>, silence_output);
+        verify(std::is_same_v<decltype(++std::declval<It>()), It &>,
+               silence_output);
       }
       {
         INFO("Iterator have to be convertble to const It after increment");
-        verify(std::is_convertible_v<decltype(++std::declval<It>()), const It>, silence_output);
+        verify(std::is_convertible_v<decltype(++std::declval<It>()), const It>,
+               silence_output);
       }
     }
 
@@ -75,13 +80,15 @@ class legacy_output_iterator_requirement : requirement_verifier {
           "Iterator have to be assignable with value_t after increment and "
           "dereferencing");
       verify(std::is_assignable_v<decltype(*(std::declval<It>()++)),
-                                  typename it_traits::value_type>, silence_output);
+                                  typename it_traits::value_type>,
+             silence_output);
     }
 
     if constexpr (is_dereferenceable && has_value_type_member) {
       INFO("Iterator have to be assignable with value_t after dereferencing");
       verify(std::is_assignable_v<decltype(*std::declval<It>()),
-                                  typename it_traits::value_type>, silence_output);
+                                  typename it_traits::value_type>,
+             silence_output);
     }
 
     return m_verification_result;

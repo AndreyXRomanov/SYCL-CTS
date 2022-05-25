@@ -29,8 +29,10 @@ class legacy_input_iterator_requirement : requirement_verifier {
     }
 
     constexpr bool is_dereferenceable = type_traits::is_dereferenceable_v<It>;
-    constexpr bool can_pre_increment = type_traits::can_pre_increment_v<It>;
-    constexpr bool can_post_increment = type_traits::can_post_increment_v<It>;
+    constexpr bool can_pre_increment =
+        type_traits::has_arithmetic::pre_increment_v<It>;
+    constexpr bool can_post_increment =
+        type_traits::has_arithmetic::post_increment_v<It>;
     constexpr bool has_reference_member =
         type_traits::has_field::reference_v<It>;
     constexpr bool has_value_type_member =

@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "../../util/type_traits.h"
 #include "../common/common.h"
 
 #include "LegacyBidirectionalIterator.h"
@@ -28,29 +29,31 @@ class legacy_random_access_iterator_requirement : requirement_verifier {
           valid_iterator, container_size, type_name);
     }
 
-    constexpr bool has_append_operator_operator =
-        type_traits::has_operator::append_v<It>;
-    constexpr bool has_reduce_operator_operator =
-        type_traits::has_operator::reduce_v<It>;
+    using diff_t = typename std::iterator_traits<It>::difference_type;
+
+    constexpr bool has_addition_operator =
+        type_traits::has_arithmetic::addition_v<It, diff_t>;
+    constexpr bool has_subtraction_operator =
+        type_traits::has_arithmetic::subtraction_v<It, diff_t>;
 
     constexpr bool has_diff_type_plus_iterator_operator =
-        type_traits::has_operator::diff_type_plus_iterator_v<It>;
+        type_traits::has_arithmetic::addition_v<diff_t, It>;
     constexpr bool has_iterator_plus_diff_type_operator =
-        type_traits::has_operator::iterator_plus_diff_type_v<It>;
+        type_traits::has_arithmetic::addition_v<It, diff_t>;
     constexpr bool has_iterator_minus_diff_type_operator =
-        type_traits::has_operator::iterator_minus_diff_type_v<It>;
+        type_traits::has_arithmetic::subtraction_v<It, diff_t>;
     constexpr bool has_iterator_minus_iterator_operator =
-        type_traits::has_operator::iterator_minus_iterator_v<It>;
-    constexpr bool has_subscript_operator =
-        type_traits::has_operator::subscript_v<It>;
+        type_traits::has_arithmetic::subtraction_v<diff_t, It>;
+    constexpr bool has_subscript_operator = has_subscript_operator_v<It>;
 
     constexpr bool has_greater_operator =
-        type_traits::has_operator::greater_v<It>;
-    constexpr bool has_lower_operator = type_traits::has_operator::lower_v<It>;
+        type_traits::has_comparison::greater_than_v<It>;
+    constexpr bool has_lower_operator =
+        type_traits::has_comparison::less_than_v<It>;
     constexpr bool has_greater_or_equal_operator =
-        type_traits::has_operator::greater_or_equal_v<It>;
+        type_traits::has_comparison::greater_or_equal_v<It>;
     constexpr bool has_lower_or_equal_operator =
-        type_traits::has_operator::lower_or_equal_v<It>;
+        type_traits::has_comparison::less_or_equal_v<It>;
 
     constexpr bool has_reference_member =
         type_traits::has_field::reference_v<It>;
@@ -59,11 +62,11 @@ class legacy_random_access_iterator_requirement : requirement_verifier {
 
     {
       INFO("Iterator have append operator");
-      verify(has_append_operator_operator);
+      verify(has_addition_operator);
     }
     {
       INFO("Iterator have reduce operator");
-      verify(has_reduce_operator_operator);
+      verify(has_subtraction_operator);
     }
     {
       INFO("Iterator have difference type plus iterator operator");
@@ -87,8 +90,7 @@ class legacy_random_access_iterator_requirement : requirement_verifier {
     }
 
     typename std::iterator_traits<It>::difference_type n = 1;
-    if constexpr (has_append_operator_operator &&
-                  has_reduce_operator_operator) {
+    if constexpr (has_addition_operator && has_subtraction_operator) {
       INFO(
           "Append and reduce operator should return It& for positive and "
           "negative vales");

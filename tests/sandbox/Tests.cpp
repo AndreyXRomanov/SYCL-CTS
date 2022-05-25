@@ -50,9 +50,9 @@ struct std::iterator_traits<UserDefinedIterator> {
 };
 
 TEST_CASE("Equal operator") {
-  CHECK_FALSE(type_traits::is_equality_comparable_v<EqualOpNotImplemented>);
-  CHECK(type_traits::is_equality_comparable_v<EqualOpImplemented>);
-  CHECK(type_traits::is_equality_comparable_v<std::vector<int>::iterator>);
+  CHECK_FALSE(type_traits::has_comparison::is_equal_v<EqualOpNotImplemented>);
+  CHECK(type_traits::has_comparison::is_equal_v<EqualOpImplemented>);
+  CHECK(type_traits::has_comparison::is_equal_v<std::vector<int>::iterator>);
 }
 
 TEST_CASE("Legacy iterator check") {

@@ -22,11 +22,11 @@ class equality_comparable_requirement : requirement_verifier {
 
     {
       INFO("Have to be able to be compared with equal operator");
-      verify(type_traits::is_equality_comparable_v<It>);
+      verify(type_traits::has_comparison::is_equal_v<It>);
     }
 
     // It will delete branch from code in compile time to not fail a compilation
-    if constexpr (type_traits::is_equality_comparable_v<It>) {
+    if constexpr (type_traits::has_comparison::is_equal_v<It>) {
       It a;
       It b;
       It c;

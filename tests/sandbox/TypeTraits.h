@@ -17,21 +17,6 @@ using is_dereferenceable_t = typename is_dereferenceable<T>::type;
 template <typename T>
 inline constexpr bool is_dereferenceable_v = is_dereferenceable<T>::value;
 
-template <typename T, typename = void>
-struct is_equality_comparable : std::false_type {};
-
-template <typename T>
-struct is_equality_comparable<
-    T, std::void_t<decltype(std::declval<T>() == std::declval<T>())>>
-    : std::true_type {};
-
-template <typename T>
-using is_equality_comparable_t = typename is_equality_comparable<T>::type;
-
-template <typename T>
-inline constexpr bool is_equality_comparable_v =
-    is_equality_comparable<T>::value;
-////////////////////////////////////////////////////
 namespace has_field {
 
 template <typename T, typename = void>
@@ -102,183 +87,166 @@ template <typename T>
 inline constexpr bool iterator_category_v = iterator_category<T>::value;
 
 }  // namespace has_field
-////////////////////////////////////////////////////
+
+namespace compound_assignment {
+template <typename T, typename RightOperandT = int, typename = void>
+struct addition : std::false_type {};
+
+template <typename T, typename RightOperandT>
+struct addition<
+    T, RightOperandT,
+    std::void_t<decltype(std::declval<T>() += std::declval<RightOperandT>())>>
+    : std::true_type {};
+
+template <typename T, typename RightOperandT = int>
+using addition_t = typename addition<T, RightOperandT>::type;
+
+template <typename T, typename RightOperandT = int>
+inline constexpr bool addition_v = addition<T, RightOperandT>::value;
+
+template <typename T, typename RightOperandT = int, typename = void>
+struct subtraction : std::false_type {};
+
+template <typename T, typename RightOperandT>
+struct subtraction<T, RightOperandT, std::void_t<decltype(std::declval<T>() -=
+                                           std::declval<RightOperandT>())>>
+    : std::true_type {};
+
+template <typename T, typename RightOperandT = int>
+using subtraction_t = typename subtraction<T>::type;
+
+template <typename T, typename RightOperandT = int>
+inline constexpr bool subtraction_v = subtraction<T>::value;
+}  // namespace compound_assignment
+
+namespace has_arithmetic {
+
+template <typename LeftOperand, typename RightOperand, typename = void>
+struct addition : std::false_type {};
+
+template <typename LeftOperand, typename RightOperand>
+struct addition<LeftOperand, RightOperand,
+                std::void_t<decltype(std::declval<LeftOperand>() +
+                                     std::declval<RightOperand>())>>
+    : std::true_type {};
+
+template <typename LeftOperand, typename RightOperand>
+using addition_t = typename addition<LeftOperand, RightOperand>::type;
+
+template <typename LeftOperand, typename RightOperand>
+inline constexpr bool addition_v = addition<LeftOperand, RightOperand>::value;
+
+template <typename LeftOperand, typename RightOperand, typename = void>
+struct subtraction : std::false_type {};
+
+template <typename LeftOperand, typename RightOperand>
+struct subtraction<LeftOperand, RightOperand,
+                   std::void_t<decltype(std::declval<LeftOperand>() -
+                                        std::declval<RightOperand>())>>
+    : std::true_type {};
+
+template <typename LeftOperand, typename RightOperand>
+using subtraction_t = typename subtraction<LeftOperand, RightOperand>::type;
+
+template <typename LeftOperand, typename RightOperand>
+inline constexpr bool subtraction_v =
+    subtraction<LeftOperand, RightOperand>::value;
 
 template <typename T, typename = void>
-struct can_pre_increment : std::false_type {};
+struct pre_increment : std::false_type {};
 
 template <typename T>
-struct can_pre_increment<T, std::void_t<decltype(++std::declval<T>())>>
+struct pre_increment<T, std::void_t<decltype(++std::declval<T>())>>
     : std::true_type {};
 
 template <typename T>
-using can_pre_increment_t = typename can_pre_increment<T>::type;
+using pre_increment_t = typename pre_increment<T>::type;
 
 template <typename T>
-inline constexpr bool can_pre_increment_v = can_pre_increment<T>::value;
+inline constexpr bool pre_increment_v = pre_increment<T>::value;
 
 template <typename T, typename = void>
-struct can_post_increment : std::false_type {};
+struct post_increment : std::false_type {};
 
 template <typename T>
-struct can_post_increment<T, std::void_t<decltype(std::declval<T>()++)>>
+struct post_increment<T, std::void_t<decltype(std::declval<T>()++)>>
     : std::true_type {};
 
 template <typename T>
-using can_post_increment_t = typename can_post_increment<T>::type;
+using post_increment_t = typename post_increment<T>::type;
 
 template <typename T>
-inline constexpr bool can_post_increment_v = can_post_increment<T>::value;
+inline constexpr bool post_increment_v = post_increment<T>::value;
 
 template <typename T, typename = void>
-struct can_post_decrement : std::false_type {};
+struct post_decrement : std::false_type {};
 
 template <typename T>
-struct can_post_decrement<T, std::void_t<decltype(std::declval<T>()--)>>
+struct post_decrement<T, std::void_t<decltype(std::declval<T>()--)>>
     : std::true_type {};
 
 template <typename T>
-using can_post_decrement_t = typename can_post_decrement<T>::type;
+using post_decrement_t = typename post_decrement<T>::type;
 
 template <typename T>
-inline constexpr bool can_post_decrement_v = can_post_decrement<T>::value;
+inline constexpr bool post_decrement_v = post_decrement<T>::value;
 
 template <typename T, typename = void>
-struct can_pre_decrement : std::false_type {};
+struct pre_decrement : std::false_type {};
 
 template <typename T>
-struct can_pre_decrement<T, std::void_t<decltype(--(std::declval<T>()))>>
+struct pre_decrement<T, std::void_t<decltype(--(std::declval<T>()))>>
     : std::true_type {};
 
 template <typename T>
-using can_pre_decrement_t = typename can_pre_decrement<T>::type;
+using pre_decrement_t = typename pre_decrement<T>::type;
 
 template <typename T>
-inline constexpr bool can_pre_decrement_v = can_pre_decrement<T>::value;
+inline constexpr bool pre_decrement_v = pre_decrement<T>::value;
+}  // namespace has_arithmetic
 
-namespace has_operator {
-
+namespace has_comparison {
 template <typename T, typename = void>
-struct append : std::false_type {};
+struct is_equal : std::false_type {};
 
 template <typename T>
-struct append<T, std::void_t<decltype(std::declval<T>() += 2)>>
+struct is_equal<T,
+                std::void_t<decltype(std::declval<T>() == std::declval<T>())>>
     : std::true_type {};
 
 template <typename T>
-using append_t = typename append<T>::type;
+using is_equal_t = typename is_equal<T>::type;
 
 template <typename T>
-inline constexpr bool append_v = append<T>::value;
+inline constexpr bool is_equal_v = is_equal<T>::value;
 
 template <typename T, typename = void>
-struct reduce : std::false_type {};
+struct greater_than : std::false_type {};
 
 template <typename T>
-struct reduce<T, std::void_t<decltype(std::declval<T>() -= 2)>>
+struct greater_than<
+    T, std::void_t<decltype(std::declval<T>() > std::declval<T>())>>
     : std::true_type {};
 
 template <typename T>
-using reduce_t = typename reduce<T>::type;
+using greater_than_t = typename greater_than<T>::type;
 
 template <typename T>
-inline constexpr bool reduce_v = reduce<T>::value;
+inline constexpr bool greater_than_v = greater_than<T>::value;
 
 template <typename T, typename = void>
-struct diff_type_plus_iterator : std::false_type {};
+struct less_than : std::false_type {};
 
 template <typename T>
-struct diff_type_plus_iterator<T, std::void_t<decltype(1 + std::declval<T>())>>
+struct less_than<T,
+                 std::void_t<decltype(std::declval<T>() < std::declval<T>())>>
     : std::true_type {};
 
 template <typename T>
-using diff_type_plus_iterator_t = typename diff_type_plus_iterator<T>::type;
+using less_than_t = typename less_than<T>::type;
 
 template <typename T>
-inline constexpr bool diff_type_plus_iterator_v =
-    diff_type_plus_iterator<T>::value;
-
-template <typename T, typename = void>
-struct iterator_plus_diff_type : std::false_type {};
-
-template <typename T>
-struct iterator_plus_diff_type<T, std::void_t<decltype(std::declval<T>() + 1)>>
-    : std::true_type {};
-
-template <typename T>
-using iterator_plus_diff_type_t = typename iterator_plus_diff_type<T>::type;
-
-template <typename T>
-inline constexpr bool iterator_plus_diff_type_v =
-    iterator_plus_diff_type<T>::value;
-
-template <typename T, typename = void>
-struct iterator_minus_diff_type : std::false_type {};
-
-template <typename T>
-struct iterator_minus_diff_type<T, std::void_t<decltype(std::declval<T>() - 1)>>
-    : std::true_type {};
-
-template <typename T>
-using iterator_minus_diff_type_t = typename iterator_minus_diff_type<T>::type;
-
-template <typename T>
-inline constexpr bool iterator_minus_diff_type_v =
-    iterator_minus_diff_type<T>::value;
-
-template <typename T, typename = void>
-struct iterator_minus_iterator : std::false_type {};
-
-template <typename T>
-struct iterator_minus_iterator<
-    T, std::void_t<decltype(std::declval<T>() - std::declval<T>())>>
-    : std::true_type {};
-
-template <typename T>
-using iterator_minus_iterator_t = typename iterator_minus_iterator<T>::type;
-
-template <typename T>
-inline constexpr bool iterator_minus_iterator_v =
-    iterator_minus_iterator<T>::value;
-
-template <typename T, typename = void>
-struct subscript : std::false_type {};
-
-template <typename T>
-struct subscript<T, std::void_t<decltype(std::declval<T>()[0])>>
-    : std::true_type {};
-
-template <typename T>
-using subscript_t = typename subscript<T>::type;
-
-template <typename T>
-inline constexpr bool subscript_v = subscript<T>::value;
-
-template <typename T, typename = void>
-struct greater : std::false_type {};
-
-template <typename T>
-struct greater<T, std::void_t<decltype(std::declval<T>() > std::declval<T>())>>
-    : std::true_type {};
-
-template <typename T>
-using greater_t = typename greater<T>::type;
-
-template <typename T>
-inline constexpr bool greater_v = greater<T>::value;
-
-template <typename T, typename = void>
-struct lower : std::false_type {};
-
-template <typename T>
-struct lower<T, std::void_t<decltype(std::declval<T>() < std::declval<T>())>>
-    : std::true_type {};
-
-template <typename T>
-using lower_t = typename lower<T>::type;
-
-template <typename T>
-inline constexpr bool lower_v = lower<T>::value;
+inline constexpr bool less_than_v = less_than<T>::value;
 
 template <typename T, typename = void>
 struct greater_or_equal : std::false_type {};
@@ -295,18 +263,18 @@ template <typename T>
 inline constexpr bool greater_or_equal_v = greater_or_equal<T>::value;
 
 template <typename T, typename = void>
-struct lower_or_equal : std::false_type {};
+struct less_or_equal : std::false_type {};
 
 template <typename T>
-struct lower_or_equal<
+struct less_or_equal<
     T, std::void_t<decltype(std::declval<T>() <= std::declval<T>())>>
     : std::true_type {};
 
 template <typename T>
-using lower_or_equal_t = typename lower_or_equal<T>::type;
+using less_or_equal_t = typename less_or_equal<T>::type;
 
 template <typename T>
-inline constexpr bool lower_or_equal_v = lower_or_equal<T>::value;
+inline constexpr bool less_or_equal_v = less_or_equal<T>::value;
 
-}  // namespace has_operator
+}  // namespace has_comparison
 }  // namespace type_traits

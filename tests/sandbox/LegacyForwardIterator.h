@@ -38,14 +38,16 @@ class legacy_forward_iterator_requirement : requirement_verifier {
     using it_traits = std::iterator_traits<It>;
 
     constexpr bool is_dereferenceable = type_traits::is_dereferenceable_v<It>;
-    constexpr bool can_post_increment = type_traits::can_post_increment_v<It>;
+    constexpr bool can_pre_increment =
+        type_traits::has_arithmetic::pre_increment_v<It>;
+    constexpr bool can_post_increment =
+        type_traits::has_arithmetic::post_increment_v<It>;
     constexpr bool has_reference_member =
         type_traits::has_field::reference_v<It>;
     constexpr bool has_value_type_member =
         type_traits::has_field::value_type_v<It>;
     constexpr bool is_equality_comparable =
-        type_traits::is_equality_comparable_v<It>;
-    constexpr bool can_pre_increment = type_traits::can_pre_increment_v<It>;
+        type_traits::has_comparison::is_equal_v<It>;
 
     // Allows us to use reference_t from iterator_traits
     if constexpr (has_reference_member) {
@@ -111,7 +113,7 @@ class legacy_forward_iterator_requirement : requirement_verifier {
         if constexpr (has_value_type_member) {
           // Allows us to compare values without compilation error
           constexpr bool is_value_type_comparable =
-              type_traits::is_equality_comparable_v<
+              type_traits::has_comparison::is_equal_v<
                   typename it_traits::value_type>;
 
           if constexpr (is_dereferenceable && can_pre_increment &&
