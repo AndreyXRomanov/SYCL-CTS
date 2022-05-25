@@ -26,7 +26,8 @@ class legacy_forward_iterator_requirement : requirement_verifier {
           "type: " +
           type_name);
       constexpr bool silent_output = true;
-      legacy_input_iterator_requirement<It>{}.check(type_name, silent_output);
+      verify(legacy_input_iterator_requirement<It>{}.check(type_name),
+             silent_output);
     }
 
     {
@@ -58,12 +59,12 @@ class legacy_forward_iterator_requirement : requirement_verifier {
         INFO(
             "Provided iterator satisfied to legacy output iterator "
             "requirements. Verify that iterator reference is non const");
-        verify(!std::is_const_v<typename it_traits::reference_t>);
+        verify(!std::is_const_v<typename it_traits::reference>);
       } else {
         INFO(
             "Provided iterator satisfied to legacy output iterator "
             "requirements. Verify that iterator reference is const");
-        verify(std::is_const_v<typename it_traits::reference_t>);
+        verify(std::is_const_v<typename it_traits::reference>);
       }
     }
 
