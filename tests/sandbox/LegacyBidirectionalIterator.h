@@ -1,4 +1,4 @@
-// FIXME remove pragma after moving to cts 512298
+// FIXME remove pragma after moving to cts
 
 #pragma once
 
