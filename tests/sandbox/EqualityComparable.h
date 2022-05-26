@@ -24,7 +24,7 @@ template <typename It>
 class equality_comparable_requirement : requirement_verifier {
  public:
   bool check(const std::string& type_name) {
-    INFO("Verify named requiremnt Equality Comparable for: " + type_name);
+    INFO("Verify named requirement Equality Comparable for: " + type_name);
 
     STATIC_CHECK(!std::is_same_v<It, void>);
 
@@ -53,8 +53,8 @@ class equality_comparable_requirement : requirement_verifier {
       }
       {
         INFO(
-            "Non-const copies of one object returns convertble to bool value "
-            "after compairing");
+            "Non-const copies of one object returns convertible to bool value "
+            "after comparing");
         verify(std::is_convertible_v<decltype((a == b)), bool>);
         verify(std::is_convertible_v<decltype((b == a)), bool>);
         verify(std::is_convertible_v<decltype((b == c)), bool>);
@@ -70,8 +70,8 @@ class equality_comparable_requirement : requirement_verifier {
       }
       {
         INFO(
-            "Const copies of one object returns convertble to bool value after "
-            "compairing");
+            "Const copies of one object returns convertible to bool value after "
+            "comparing");
         verify(std::is_convertible_v<decltype((const_a == const_b)), bool>);
         verify(std::is_convertible_v<decltype((const_b == const_c)), bool>);
         verify(std::is_convertible_v<decltype((const_a == const_c)), bool>);

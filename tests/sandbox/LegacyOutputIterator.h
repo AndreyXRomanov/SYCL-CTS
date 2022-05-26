@@ -60,7 +60,7 @@ class legacy_output_iterator_requirement : requirement_verifier {
     using it_traits = std::iterator_traits<It>;
 
     if constexpr (has_value_type_member && is_dereferenceable) {
-      INFO("Dereferenced iterator have to be assignble with value_t");
+      INFO("Dereferenced iterator have to be assignable with value_t");
       verify(std::is_assignable_v<decltype(*std::declval<It>()),
                                   typename it_traits::value_type>,
              silence_output);
@@ -76,7 +76,7 @@ class legacy_output_iterator_requirement : requirement_verifier {
                silence_output);
       }
       {
-        INFO("Iterator have to be convertble to const It after increment");
+        INFO("Iterator have to be convertible to const It after increment");
         verify(std::is_convertible_v<decltype(++std::declval<It>()), const It>,
                silence_output);
       }

@@ -24,18 +24,18 @@ template <typename It>
 class legacy_iterator_requirement : requirement_verifier {
  public:
   bool check(const std::string& type_name) {
-    INFO("Verify named requiremnt Legacy Iterator: " + type_name);
+    INFO("Verify named requirement Legacy Iterator: " + type_name);
     STATIC_CHECK(!std::is_same_v<It, void>);
     {
-      INFO("Iterator have to be copy constructble");
+      INFO("Iterator have to be copy constructable");
       verify(std::is_copy_constructible_v<It>);
     }
     {
-      INFO("Iterator have to be copy assignble");
+      INFO("Iterator have to be copy assignable");
       verify(std::is_copy_assignable_v<It>);
     }
     {
-      INFO("Iterator have to be destrcutble");
+      INFO("Iterator have to be destructible");
       verify(std::is_destructible_v<It>);
     }
     {
@@ -71,7 +71,7 @@ class legacy_iterator_requirement : requirement_verifier {
       verify(std::is_same_v<decltype(++std::declval<It>()), It&>);
     }
     {
-      INFO("Iterator have to be dereferenceble");
+      INFO("Iterator have to be dereferenceable");
       verify(type_traits::is_dereferenceable_v<It>);
     }
 

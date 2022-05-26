@@ -24,7 +24,7 @@ template <typename It>
 class legacy_input_iterator_requirement : requirement_verifier {
  public:
   bool check(const std::string& type_name) {
-    INFO("Verify named requiremnt Legacy Input Iterator for: " + type_name);
+    INFO("Verify named requirement Legacy Input Iterator for: " + type_name);
     STATIC_CHECK(!std::is_same_v<It, void>);
 
     {
@@ -78,7 +78,7 @@ class legacy_input_iterator_requirement : requirement_verifier {
     }
     {
       INFO(
-          "Two not equal iterators have to return implicit convertble to "
+          "Two not equal iterators have to return implicit convertible to "
           "bool value with NOT EQUAL operator");
       verify(std::is_convertible_v<decltype((i != j)), bool>);
       verify(std::is_convertible_v<decltype(!(i == j)), bool>);
@@ -95,7 +95,7 @@ class legacy_input_iterator_requirement : requirement_verifier {
 
     if constexpr (is_dereferenceable && can_post_increment &&
                   has_value_type_member) {
-      INFO("Iterator expression *i++ have to be convertble to value_type");
+      INFO("Iterator expression *i++ have to be convertible to value_type");
       verify(std::is_convertible_v<decltype(*(std::declval<It>()++)),
                                    typename it_traits::value_type>);
     }
@@ -108,7 +108,7 @@ class legacy_input_iterator_requirement : requirement_verifier {
     }
     if constexpr (is_dereferenceable && has_value_type_member) {
       INFO(
-          "Iterator dereference result have to be convertble to "
+          "Iterator dereference result have to be convertible to "
           "value_type");
       verify(std::is_convertible_v<decltype(*std::declval<It>()),
                                    typename it_traits::value_type>);

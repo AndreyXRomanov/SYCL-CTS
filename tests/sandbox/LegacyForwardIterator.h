@@ -24,7 +24,7 @@ class legacy_forward_iterator_requirement : requirement_verifier {
  public:
   bool check(It valid_iterator, const size_t container_size,
              const std::string& type_name) {
-    INFO("Verify named requiremnt Legacy Input Iterator for: " + type_name);
+    INFO("Verify named requirement Legacy Input Iterator for: " + type_name);
     STATIC_CHECK(!std::is_same_v<It, void>);
 
     {
@@ -85,7 +85,7 @@ class legacy_forward_iterator_requirement : requirement_verifier {
     }
     if constexpr (can_post_increment && is_dereferenceable &&
                   has_value_type_member) {
-      INFO("Iterator expression *i++ have to be convertble to value_type");
+      INFO("Iterator expression *i++ have to be convertible to value_type");
       verify((std::is_convertible_v<decltype(*(std::declval<It>()++)),
                                     typename it_traits::value_type>));
     }
