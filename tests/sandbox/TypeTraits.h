@@ -1,5 +1,19 @@
-// FIXME remove pragma after moving to cts
-#pragma once
+/*******************************************************************************
+//
+//  SYCL 2020 Conformance Test Suite
+//
+//  Provides helping functions to know that provided type have the following
+//  things:
+//    - Some fields (e.g. value_type or difference_type)
+//    - Perform a function (e.g. dereference,  over the provided type
+//    - Perform an increment, decrement, post_increment or other algorithm
+//        operations
+//    - Perform a comparison operators (e.g. greater, less or less_or_equal)
+//
+*******************************************************************************/
+
+#ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_TYPE_TRAITS_H
+#define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_TYPE_TRAITS_H
 
 #include <type_traits>
 
@@ -17,6 +31,7 @@ using is_dereferenceable_t = typename is_dereferenceable<T>::type;
 template <typename T>
 inline constexpr bool is_dereferenceable_v = is_dereferenceable<T>::value;
 
+// Provide code to verify that provided datatype has different fields
 namespace has_field {
 
 template <typename T, typename = void>
@@ -88,6 +103,7 @@ inline constexpr bool iterator_category_v = iterator_category<T>::value;
 
 }  // namespace has_field
 
+// Provide code to verify that provided datatype has compound assignment
 namespace compound_assignment {
 template <typename T, typename RightOperandT = int, typename = void>
 struct addition : std::false_type {};
@@ -119,6 +135,7 @@ template <typename T, typename RightOperandT = int>
 inline constexpr bool subtraction_v = subtraction<T>::value;
 }  // namespace compound_assignment
 
+// Provide code to verify that provided datatype has arithmetic operators
 namespace has_arithmetic {
 
 template <typename LeftOperand, typename RightOperand, typename = void>
@@ -205,6 +222,7 @@ template <typename T>
 inline constexpr bool pre_decrement_v = pre_decrement<T>::value;
 }  // namespace has_arithmetic
 
+// Provide code to verify that provided datatype has comparison operators
 namespace has_comparison {
 template <typename T, typename = void>
 struct is_equal : std::false_type {};
@@ -278,3 +296,5 @@ inline constexpr bool less_or_equal_v = less_or_equal<T>::value;
 
 }  // namespace has_comparison
 }  // namespace type_traits
+
+#endif  // __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_TYPE_TRAITS_H

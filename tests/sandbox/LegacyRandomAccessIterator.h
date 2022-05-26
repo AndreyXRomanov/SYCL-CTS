@@ -1,6 +1,14 @@
-// FIXME remove pragma after moving to cts
+/*******************************************************************************
+//
+//  SYCL 2020 Conformance Test Suite
+//
+//  Provides functions to verify Legacy random access iterator requirements
+//
+*******************************************************************************/
 
-#pragma once
+#ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_RANDOM_ACCESS_ITERATOR_H
+#define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_RANDOM_ACCESS_ITERATOR_H
+
 
 #include "../../util/type_traits.h"
 #include "../common/common.h"
@@ -195,3 +203,5 @@ class legacy_random_access_iterator_requirement : requirement_verifier {
     return m_verification_result;
   }
 };
+
+#endif  // __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_RANDOM_ACCESS_ITERATOR_H

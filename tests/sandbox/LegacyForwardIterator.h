@@ -1,6 +1,13 @@
-// FIXME remove pragma after moving to cts
+/*******************************************************************************
+//
+//  SYCL 2020 Conformance Test Suite
+//
+//  Provides functions to verify Legacy forward iterator requirements
+//
+*******************************************************************************/
 
-#pragma once
+#ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_FORWARD_ITERATOR_H
+#define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_FORWARD_ITERATOR_H
 
 #include "../common/common.h"
 
@@ -132,3 +139,5 @@ class legacy_forward_iterator_requirement : requirement_verifier {
     return m_verification_result;
   }
 };
+
+#endif  // __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_FORWARD_ITERATOR_H

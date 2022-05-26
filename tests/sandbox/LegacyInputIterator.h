@@ -1,5 +1,13 @@
-// FIXME remove pragma after moving to cts
-#pragma once
+/*******************************************************************************
+//
+//  SYCL 2020 Conformance Test Suite
+//
+//  Provides functions to verify Legacy input iterator requirements
+//
+*******************************************************************************/
+
+#ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_INPUT_ITERATOR_H
+#define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_INPUT_ITERATOR_H
 
 #include "../common/common.h"
 
@@ -108,3 +116,5 @@ class legacy_input_iterator_requirement : requirement_verifier {
     return m_verification_result;
   }
 };
+
+#endif  // __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_INPUT_ITERATOR_H

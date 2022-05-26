@@ -1,5 +1,13 @@
-// FIXME remove pragma after moving to cts
-#pragma once
+/*******************************************************************************
+//
+//  SYCL 2020 Conformance Test Suite
+//
+//  Provides functions to verify equality comparable requirements
+//
+*******************************************************************************/
+
+#ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_EQUALITY_COMPARABLE_H
+#define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_EQUALITY_COMPARABLE_H
 
 #include "../common/common.h"
 
@@ -73,3 +81,5 @@ class equality_comparable_requirement : requirement_verifier {
     return m_verification_result;
   }
 };
+
+#endif  // __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_EQUALITY_COMPARABLE_H
