@@ -86,7 +86,7 @@ class legacy_bidirectional_iterator_requirement : requirement_verifier {
 
     if constexpr (can_pre_decrement) {
       INFO("Iterator expression --i have to return It& data type");
-      CHECK(std::is_same_v<decltype(--std::declval<It>()), It&>)>);
+      CHECK(std::is_same_v<decltype(--std::declval<It>()), It&>);
     }
 
     if constexpr (can_post_increment && can_post_decrement &&

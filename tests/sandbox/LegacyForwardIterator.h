@@ -90,7 +90,7 @@ class legacy_forward_iterator_requirement : requirement_verifier {
                                     typename it_traits::value_type>));
     }
 
-    if (container_size = 0) {
+    if (container_size == 0) {
       WARN(
           "Some of the tests requires container size is equal to 0, so they "
           "will be skipped");

@@ -12,6 +12,15 @@
 
 #include "user_defined_iterators.h"
 
+class EqualOpImplemented {
+ public:
+  bool operator==(const EqualOpImplemented&) const { return true; }
+};
+class EqualOpNotImplemented {
+ public:
+  bool operator==(const EqualOpImplemented&) = delete;
+};
+
 TEST_CASE("Equal operator") {
   CHECK_FALSE(type_traits::has_comparison::is_equal_v<EqualOpNotImplemented>);
   CHECK(type_traits::has_comparison::is_equal_v<EqualOpImplemented>);
