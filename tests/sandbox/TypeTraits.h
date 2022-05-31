@@ -5,7 +5,7 @@
 //  Provides helping functions to know that provided type have the following
 //  things:
 //    - Some fields (e.g. value_type or difference_type)
-//    - Perform a function (e.g. dereference,  over the provided type
+//    - Perform a function (e.g. dereference, subscript operator)
 //    - Perform an increment, decrement, post_increment or other algorithm
 //        operations
 //    - Perform a comparison operators (e.g. greater, less or less_or_equal)
@@ -30,6 +30,20 @@ using is_dereferenceable_t = typename is_dereferenceable<T>::type;
 
 template <typename T>
 inline constexpr bool is_dereferenceable_v = is_dereferenceable<T>::value;
+
+template <typename T, typename = void>
+struct has_subscript_operator : std::false_type {};
+
+template <typename T>
+struct has_subscript_operator<T, std::void_t<decltype(std::declval<T>()[0])>>
+    : std::true_type {};
+
+template <typename T>
+using has_subscript_operator_t = typename has_subscript_operator<T>::type;
+
+template <typename T>
+inline constexpr bool has_subscript_operator_v =
+    has_subscript_operator<T>::value;
 
 // Provide code to verify that provided datatype has different fields
 namespace has_field {
@@ -124,8 +138,9 @@ template <typename T, typename RightOperandT = int, typename = void>
 struct subtraction : std::false_type {};
 
 template <typename T, typename RightOperandT>
-struct subtraction<T, RightOperandT, std::void_t<decltype(std::declval<T>() -=
-                                           std::declval<RightOperandT>())>>
+struct subtraction<
+    T, RightOperandT,
+    std::void_t<decltype(std::declval<T>() -= std::declval<RightOperandT>())>>
     : std::true_type {};
 
 template <typename T, typename RightOperandT = int>

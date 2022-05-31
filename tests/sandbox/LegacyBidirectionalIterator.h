@@ -23,7 +23,8 @@ class legacy_bidirectional_iterator_requirement : requirement_verifier {
  public:
   bool check(It valid_iterator, const size_t container_size,
              const std::string& type_name) {
-    INFO("Verify named requirement Legacy Input Iterator for: " + type_name);
+    INFO("Verify named requirement Legacy Bidirectional Iterator for: " +
+         type_name);
     STATIC_CHECK(!std::is_same_v<It, void>);
 
     {
@@ -84,20 +85,20 @@ class legacy_bidirectional_iterator_requirement : requirement_verifier {
     }
 
     if constexpr (can_pre_decrement) {
-      INFO("Verify that a and --a designate the same iterator object");
-      CHECK(std::is_same_v<decltype(--std::declval<It>()), It>);
+      INFO("Iterator expression --i have to return It& data type");
+      CHECK(std::is_same_v<decltype(--std::declval<It>()), It&>)>);
     }
 
     if constexpr (can_post_increment && can_post_decrement &&
                   has_value_type_member) {
       INFO("Iterator expression *i++ have to be convertible to value_type");
       CHECK((std::is_convertible_v<decltype((++std::declval<It>())--),
-                                   typename it_traits::value_type>));
+                                   const It&>));
     }
 
     if constexpr (can_post_decrement && is_dereferenceable &&
                   has_reference_member) {
-      INFO("Iterator expression *i++ have to be convertible to value_type");
+      INFO("Iterator expression *i++ have to return reference data type");
       CHECK((std::is_same_v<decltype(*(std::declval<It>()--)),
                             typename it_traits::reference>));
     }

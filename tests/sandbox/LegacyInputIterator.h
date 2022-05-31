@@ -45,7 +45,13 @@ class legacy_input_iterator_requirement : requirement_verifier {
         type_traits::has_field::reference_v<It>;
     constexpr bool has_value_type_member =
         type_traits::has_field::value_type_v<It>;
+    constexpr bool is_equality_comparable =
+        type_traits::has_comparison::is_equal_v<It>;
 
+    {
+      INFO("Iterator have to be equality comparable");
+      verify(is_equality_comparable);
+    }
     {
       INFO("Iterator have to be dereferenceable");
       verify(is_dereferenceable);

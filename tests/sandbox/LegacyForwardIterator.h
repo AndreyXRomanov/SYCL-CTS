@@ -24,7 +24,7 @@ class legacy_forward_iterator_requirement : requirement_verifier {
  public:
   bool check(It valid_iterator, const size_t container_size,
              const std::string& type_name) {
-    INFO("Verify named requirement Legacy Input Iterator for: " + type_name);
+    INFO("Verify named requirement Legacy Forward Iterator for: " + type_name);
     STATIC_CHECK(!std::is_same_v<It, void>);
 
     {
@@ -90,10 +90,10 @@ class legacy_forward_iterator_requirement : requirement_verifier {
                                     typename it_traits::value_type>));
     }
 
-    if (container_size > 0) {
+    if (container_size = 0) {
       WARN(
-          "Some of the tests requires container size that not greater than 0, "
-          "so they will be skipped");
+          "Some of the tests requires container size is equal to 0, so they "
+          "will be skipped");
     } else {
       // Verify multipass guarantee
       if constexpr (is_equality_comparable && is_dereferenceable &&

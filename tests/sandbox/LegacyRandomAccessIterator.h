@@ -9,7 +9,6 @@
 #ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_RANDOM_ACCESS_ITERATOR_H
 #define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_RANDOM_ACCESS_ITERATOR_H
 
-
 #include "../../util/type_traits.h"
 #include "../common/common.h"
 
@@ -25,7 +24,8 @@ class legacy_random_access_iterator_requirement : requirement_verifier {
  public:
   bool check(It valid_iterator, const size_t container_size,
              const std::string type_name) {
-    INFO("Verify named requirement Legacy Input Iterator for: " + type_name);
+    INFO("Verify named requirement Legacy Random Access Iterator for: " +
+         type_name);
     STATIC_CHECK(!std::is_same_v<It, void>);
 
     {
@@ -40,9 +40,9 @@ class legacy_random_access_iterator_requirement : requirement_verifier {
     using diff_t = typename std::iterator_traits<It>::difference_type;
 
     constexpr bool has_addition_operator =
-        type_traits::has_arithmetic::addition_v<It, diff_t>;
+        type_traits::compound_assignment::addition_v<It, diff_t>;
     constexpr bool has_subtraction_operator =
-        type_traits::has_arithmetic::subtraction_v<It, diff_t>;
+        type_traits::compound_assignment::subtraction_v<It, diff_t>;
 
     constexpr bool has_diff_type_plus_iterator_operator =
         type_traits::has_arithmetic::addition_v<diff_t, It>;
@@ -50,9 +50,10 @@ class legacy_random_access_iterator_requirement : requirement_verifier {
         type_traits::has_arithmetic::addition_v<It, diff_t>;
     constexpr bool has_iterator_minus_diff_type_operator =
         type_traits::has_arithmetic::subtraction_v<It, diff_t>;
-    constexpr bool has_iterator_minus_iterator_operator =
+    constexpr bool has_diff_type_minus_iterator_operator =
         type_traits::has_arithmetic::subtraction_v<diff_t, It>;
-    constexpr bool has_subscript_operator = has_subscript_operator_v<It>;
+    constexpr bool has_iterator_minus_iterator_operator =
+        type_traits::has_arithmetic::subtraction_v<It, It>;
 
     constexpr bool has_greater_operator =
         type_traits::has_comparison::greater_than_v<It>;
@@ -62,6 +63,8 @@ class legacy_random_access_iterator_requirement : requirement_verifier {
         type_traits::has_comparison::greater_or_equal_v<It>;
     constexpr bool has_lower_or_equal_operator =
         type_traits::has_comparison::less_or_equal_v<It>;
+    constexpr bool has_subscript_operator =
+        type_traits::has_subscript_operator_v<It>;
 
     constexpr bool has_reference_member =
         type_traits::has_field::reference_v<It>;
@@ -89,7 +92,11 @@ class legacy_random_access_iterator_requirement : requirement_verifier {
       verify(has_iterator_minus_diff_type_operator);
     }
     {
-      INFO("Iterator have iterator minus iterator operator");
+      INFO("Iterator have difference type minus iterator operator");
+      verify(has_diff_type_minus_iterator_operator);
+    }
+    {
+      INFO("Iterator iterator minus iterator operator");
       verify(has_iterator_minus_iterator_operator);
     }
     {
@@ -122,6 +129,7 @@ class legacy_random_access_iterator_requirement : requirement_verifier {
         verify(std::is_same_v<decltype(a - n), It>);
         verify(std::is_same_v<decltype(-n + a), It>);
       }
+      INFO("It + difference type should be equal to difference type + It");
       It a{};
       verify(a + n == n + a);
     }
