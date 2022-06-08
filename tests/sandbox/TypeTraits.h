@@ -254,6 +254,20 @@ template <typename T>
 inline constexpr bool is_equal_v = is_equal<T>::value;
 
 template <typename T, typename = void>
+struct not_equal : std::false_type {};
+
+template <typename T>
+struct not_equal<T,
+                 std::void_t<decltype(std::declval<T>() != std::declval<T>())>>
+    : std::true_type {};
+
+template <typename T>
+using not_equal_t = typename not_equal<T>::type;
+
+template <typename T>
+inline constexpr bool not_equal_v = not_equal<T>::value;
+
+template <typename T, typename = void>
 struct greater_than : std::false_type {};
 
 template <typename T>
