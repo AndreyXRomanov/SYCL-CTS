@@ -2,35 +2,28 @@
 //
 //  SYCL 2020 Conformance Test Suite
 //
-//  Provides functions to verify equality comparable requirements
+//  Provides class to verify conformity with named requirement EqualityComparable
 //
 *******************************************************************************/
 
 #ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_EQUALITY_COMPARABLE_H
 #define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_EQUALITY_COMPARABLE_H
 
-#include "../common/common.h"
-
 #include "TypeTraits.h"
 #include "common.h"
 
-#include <chrono>
-#include <iostream>
-#include <type_traits>
-#include <utility>
-#include <vector>
-
-template <typename It>
-class equality_comparable_requirement : requirement_verifier {
+class equality_comparable_requirement {
  public:
-  bool check(const std::string& type_name) {
-    INFO("Verify named requirement Equality Comparable for: " + type_name);
+  static constexpr size_t count_of_possible_errors = 4;
 
-    STATIC_CHECK(!std::is_same_v<It, void>);
+ private:
+  error_messages_container<count_of_possible_errors> errors;
 
-    {
-      INFO("Have to be able to be compared with equal operator");
-      verify(type_traits::has_comparison::is_equal_v<It>);
+ public:
+  template <typename It>
+  auto is_satisfied_for() {
+    if (!type_traits::has_comparison::is_equal_v<It>) {
+      errors.add_error("Doesn't have implemented operator==()");
     }
 
     // It will delete branch from code in compile time to not fail a compilation
@@ -42,43 +35,40 @@ class equality_comparable_requirement : requirement_verifier {
       const It const_b;
       const It const_c;
 
-      {
-        INFO(
-            "Non-const copies of one object are actually equal during "
-            "comparing");
-        verify(a == b);
-        verify(b == a);
-        verify(b == c);
-        verify(a == c);
-      }
-      {
-        INFO(
-            "Non-const copies of one object returns convertible to bool value "
-            "after comparing");
-        verify(std::is_convertible_v<decltype((a == b)), bool>);
-        verify(std::is_convertible_v<decltype((b == a)), bool>);
-        verify(std::is_convertible_v<decltype((b == c)), bool>);
-        verify(std::is_convertible_v<decltype((a == c)), bool>);
+      if (!(a == b) || !(b == a) || !(b == c) || !(a == c)) {
+        errors.add_error(
+            "Non-const copies of one object doesn't equal to each other equal "
+            "during comparing");
       }
 
-      {
-        INFO("Const copies of one object are actually equal during comparing");
-        verify(const_a == const_b);
-        verify(const_b == const_c);
-        verify(const_a == const_c);
-        verify(const_b == const_a);
+      if ((!std::is_convertible_v<decltype((a == b)), bool>) ||
+          (!std::is_convertible_v<decltype((b == a)), bool>) ||
+          (!std::is_convertible_v<decltype((b == c)), bool>) ||
+          (!std::is_convertible_v<decltype((a == c)), bool>)) {
+        errors.add_error(
+            "Non-const copies of one object doesn't return convertible to bool "
+            "value after comparing");
       }
-      {
-        INFO(
-            "Const copies of one object returns convertible to bool value after "
-            "comparing");
-        verify(std::is_convertible_v<decltype((const_a == const_b)), bool>);
-        verify(std::is_convertible_v<decltype((const_b == const_c)), bool>);
-        verify(std::is_convertible_v<decltype((const_a == const_c)), bool>);
-        verify(std::is_convertible_v<decltype((const_b == const_a)), bool>);
+
+      if (!(const_a == const_b) || !(const_b == const_a) ||
+          !(const_b == const_c) || !(const_a == const_c)) {
+        errors.add_error(
+            "Const copies of one object doesn't equal to each other equal "
+            "during comparing");
+      }
+
+      if ((!std::is_convertible_v<decltype((const_a == const_b)), bool>) ||
+          (!std::is_convertible_v<decltype((const_b == const_c)), bool>) ||
+          (!std::is_convertible_v<decltype((const_a == const_c)), bool>) ||
+          (!std::is_convertible_v<decltype((const_b == const_a)), bool>)) {
+        errors.add_error(
+            "Const copies of one object doesn't return convertible to bool "
+            "value after comparing");
       }
     }
-    return m_verification_result;
+
+    const bool is_satisfied = !errors.has_errors();
+    return std::make_pair(is_satisfied, errors.get_array());
   }
 };
 

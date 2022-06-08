@@ -2,47 +2,35 @@
 //
 //  SYCL 2020 Conformance Test Suite
 //
-//  Provides functions to verify Legacy forward iterator requirements
+//  Provides class to verify conformity with named requirement LegacyForwardIterator
 //
 *******************************************************************************/
 
 #ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_FORWARD_ITERATOR_H
 #define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_FORWARD_ITERATOR_H
 
-#include "../common/common.h"
-
 #include "LegacyInputIterator.h"
 #include "LegacyOutputIterator.h"
 #include "TypeTraits.h"
 #include "common.h"
 
-#include <type_traits>
-#include <utility>
-
-template <typename It>
-class legacy_forward_iterator_requirement : requirement_verifier {
+class legacy_forward_iterator_requirement {
  public:
-  bool check(It valid_iterator, const size_t container_size,
-             const std::string& type_name) {
-    INFO("Verify named requirement Legacy Forward Iterator for: " + type_name);
-    STATIC_CHECK(!std::is_same_v<It, void>);
+  static constexpr size_t count_of_possible_errors =
+      legacy_input_iterator_requirement::count_of_possible_errors +
+      legacy_output_iterator_requirement::count_of_possible_errors + 10;
 
-    {
-      INFO(
-          "Iterator have to satisfy Legacy input iterator requirement. Testing "
-          "type: " +
-          type_name);
-      constexpr bool silent_output = true;
-      verify(legacy_input_iterator_requirement<It>{}.check(type_name),
-             silent_output);
+ private:
+  error_messages_container<count_of_possible_errors> errors;
+
+ public:
+  template <typename It>
+  auto is_satisfied_for(It valid_iterator, const size_t container_size) {
+    auto legacy_input_iterator_res =
+        legacy_input_iterator_requirement{}.is_satisfied_for<It>();
+    if (legacy_input_iterator_res.first == false) {
+      errors.add_errors(legacy_input_iterator_res.second);
     }
-
-    {
-      INFO("Iterator have to be default constructible");
-      verify(std::is_default_constructible_v<It>);
-    }
-
-    using it_traits = std::iterator_traits<It>;
 
     constexpr bool is_dereferenceable = type_traits::is_dereferenceable_v<It>;
     constexpr bool can_pre_increment =
@@ -53,67 +41,78 @@ class legacy_forward_iterator_requirement : requirement_verifier {
         type_traits::has_field::reference_v<It>;
     constexpr bool has_value_type_member =
         type_traits::has_field::value_type_v<It>;
-    constexpr bool is_equality_comparable =
+    constexpr bool has_equal_operator =
         type_traits::has_comparison::is_equal_v<It>;
+    constexpr bool is_def_constructable = std::is_default_constructible_v<It>;
+    
+    if (!is_def_constructable) {
+      errors.add_error("Iterator have to be default constructible");
+    }
+
+    using it_traits = std::iterator_traits<It>;
 
     // Allows us to use reference_t from iterator_traits
     if constexpr (has_reference_member) {
-      INFO("Verify optional legacy iterator requirements");
-      // Required silent output because this is an optional requirement, so
-      // verification on legacy_output_iterator_requirement could fail without
-      // any error messages
-      constexpr bool silent_output = true;
-      if (legacy_output_iterator_requirement<It>{}.check(type_name,
-                                                         silent_output)) {
-        INFO(
-            "Provided iterator satisfied to legacy output iterator "
-            "requirements. Verify that iterator reference is non const");
-        verify(!std::is_const_v<typename it_traits::reference>);
+      const bool is_output_iterator_req_satisfied =
+          legacy_output_iterator_requirement{}.is_satisfied_for<It>().first;
+
+      if (is_output_iterator_req_satisfied) {
+        if (std::is_const_v<typename it_traits::reference> == true) {
+          errors.add_error(
+              "Provided iterator satisfy to LegacyOutputIterator "
+              "requirement. Iterator reference have to be non const");
+        }
       } else {
-        INFO(
-            "Provided iterator satisfied to legacy output iterator "
-            "requirements. Verify that iterator reference is const");
-        verify(std::is_const_v<typename it_traits::reference>);
+        if (std::is_const_v<typename it_traits::reference> == false) {
+          errors.add_error(
+              "Provided iterator not satisfy to LegacyOutputIterator "
+              "requirement. Iterator reference have to be const");
+        }
       }
     }
 
-    if constexpr (can_post_increment && is_dereferenceable) {
-      INFO(
-          "Iterator expression i++ have to be the same type as provided "
-          "iterator's type");
-      verify((std::is_same_v<decltype(std::declval<It>()++), It>));
+    if constexpr (can_post_increment) {
+      if (std::is_same_v<decltype(std::declval<It>()++), It> == false) {
+        errors.add_error("operator++(int) have to return It");
+      }
     }
+
     if constexpr (can_post_increment && is_dereferenceable &&
-                  has_value_type_member) {
-      INFO("Iterator expression *i++ have to be convertible to value_type");
-      verify((std::is_convertible_v<decltype(*(std::declval<It>()++)),
-                                    typename it_traits::value_type>));
+                  has_reference_member) {
+      if (std::is_convertible_v<decltype(*(std::declval<It>()++)),
+                                typename it_traits::reference> == false) {
+        errors.add_error(
+            "Expression *i++ have to be convertible to "
+            "iterator_traits::reference");
+      }
     }
 
     if (container_size == 0) {
-      WARN(
-          "Some of the tests requires container size is equal to 0, so they "
-          "will be skipped");
+      errors.add_error(
+          "Some of the test requires container size more than 0. These tests "
+          "have been skipped");
     } else {
       // Verify multipass guarantee
-      if constexpr (is_equality_comparable && is_dereferenceable &&
+      if constexpr (has_equal_operator && is_dereferenceable &&
                     can_pre_increment) {
         {
           It a = valid_iterator;
           It b = valid_iterator;
-          {
-            INFO(
+          if ((*a == *b) == false) {
+            errors.add_error(
                 "If a and b compare equal (a == b) then *a and *b "
                 "are references bound to the same object");
-            verify(*a == *b);
           }
-          {
-            INFO("If *a and *b refer to the same object, then a == b");
-            verify(a == b);
+
+          if ((a == b) == false) {
+            errors.add_error(
+                "If *a and *b refer to the same object, then a == b equals "
+                "true");
           }
-          {
-            INFO("a == b implies ++a == ++b");
-            verify(++a == ++b);
+
+          if ((++a == ++b) == false) {
+            errors.add_error(
+                "If a == b equals true then ++a == ++b also equals true");
           }
         }
 
@@ -125,18 +124,21 @@ class legacy_forward_iterator_requirement : requirement_verifier {
 
           if constexpr (is_dereferenceable && can_pre_increment &&
                         is_value_type_comparable) {
-            INFO(
-                "Incrementing a copy of a does not change the value read "
-                "from a");
             const auto zero_pos_value = *valid_iterator;
             It zero_pos_it = valid_iterator;
             ++zero_pos_it;
-            verify(zero_pos_value == *valid_iterator);
+            if ((zero_pos_value == *valid_iterator) == false) {
+              errors.add_error(
+                  "Incrementing copy of iterator instance have to not affect "
+                  "on the value read from original object");
+            }
           }
         }
       }
     }
-    return m_verification_result;
+
+    const bool is_satisfied = !errors.has_errors();
+    return std::make_pair(is_satisfied, errors.get_array());
   }
 };
 

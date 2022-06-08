@@ -2,40 +2,34 @@
 //
 //  SYCL 2020 Conformance Test Suite
 //
-//  Provides functions to verify Legacy bidirectional iterator requirements
+//  Provides class to verify conformity with named requirement LegacyBidirectionalIterator
 //
 *******************************************************************************/
 
 #ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_BIDIRECTIONAL_ITERATOR_H
 #define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_BIDIRECTIONAL_ITERATOR_H
 
-#include "../common/common.h"
-
 #include "LegacyForwardIterator.h"
 #include "TypeTraits.h"
 #include "common.h"
 
-#include <type_traits>
-#include <utility>
-
-template <typename It>
-class legacy_bidirectional_iterator_requirement : requirement_verifier {
+class legacy_bidirectional_iterator_requirement {
  public:
-  bool check(It valid_iterator, const size_t container_size,
-             const std::string& type_name) {
-    INFO("Verify named requirement Legacy Bidirectional Iterator for: " +
-         type_name);
-    STATIC_CHECK(!std::is_same_v<It, void>);
+  static constexpr int count_of_possible_errors =
+      legacy_forward_iterator_requirement::count_of_possible_errors + 7;
 
-    {
-      INFO(
-          "Iterator have to satisfy Legacy forward iterator requirement. "
-          "Testing type: " +
-          type_name);
-      constexpr bool silent_output = true;
-      verify(legacy_forward_iterator_requirement<It>{}.check(
-                 valid_iterator, container_size, type_name),
-             silent_output);
+ private:
+  error_messages_container<count_of_possible_errors> errors;
+
+ public:
+  template <typename It>
+  auto is_satisfied_for(It valid_iterator, const size_t container_size) {
+    auto legacy_forward_iterator_res =
+        legacy_forward_iterator_requirement{}.is_satisfied_for<It>(
+            valid_iterator, container_size);
+
+    if (legacy_forward_iterator_res.first == false) {
+      errors.add_errors(legacy_forward_iterator_res.second);
     }
 
     using it_traits = std::iterator_traits<It>;
@@ -55,55 +49,60 @@ class legacy_bidirectional_iterator_requirement : requirement_verifier {
         type_traits::has_field::value_type_v<It>;
 
     if constexpr (can_pre_increment && can_pre_decrement) {
-      INFO("Iterator expression --i have to return It& type");
-
-      CHECK((std::is_same_v<decltype(--(++std::declval<It>())), It&>));
+      if (std::is_same_v<decltype(--(++std::declval<It>())), It&> == false) {
+        errors.add_error("Iterator expression --(++i) have to return It& type");
+      }
     }
 
     if (container_size == 0) {
-      WARN(
-          "Some of the tests requires container size that not lower than 2, so "
-          "they will be skipped");
+      errors.add_error(
+          "Some of the test requires container size more than 0. These tests "
+          "have been skipped");
     } else {
       if constexpr (can_pre_decrement && can_pre_increment &&
                     is_dereferenceable) {
         It a = valid_iterator;
         It b = a;
-        {
-          INFO(
-              "Iterator expression i++ have to be the same type as provided "
-              "iterator's type");
-          CHECK(--(++a) == a);
+        if ((--(++a) == a) == false) {
+          errors.add_error("Iterator expression --(++i) have to be equal to i");
         }
         ++a;
         ++b;
         if (--a == --b) {
-          INFO("If --a == --b then a == b");
-          CHECK(a == b);
+          if ((a == b) == false) {
+            errors.add_error("If --a == --b then a == b have to be true");
+          }
         }
       }
     }
 
     if constexpr (can_pre_decrement) {
-      INFO("Iterator expression --i have to return It& data type");
-      CHECK(std::is_same_v<decltype(--std::declval<It>()), It&>);
+      if (std::is_same_v<decltype(--(std::declval<It>())), It&> == false) {
+        errors.add_error(
+            "Iterator expression --i have to return It& data type");
+      }
     }
 
     if constexpr (can_post_increment && can_post_decrement &&
                   has_value_type_member) {
-      INFO("Iterator expression *i++ have to be convertible to value_type");
-      CHECK((std::is_convertible_v<decltype((++std::declval<It>())--),
-                                   const It&>));
+      if (std::is_convertible_v<decltype((++std::declval<It>())--),
+                                const It&> == false) {
+        errors.add_error(
+            "Iterator expression (i++)-- have to be convertible to const It&");
+      }
     }
 
     if constexpr (can_post_decrement && is_dereferenceable &&
                   has_reference_member) {
-      INFO("Iterator expression *i++ have to return reference data type");
-      CHECK((std::is_same_v<decltype(*(std::declval<It>()--)),
-                            typename it_traits::reference>));
+      if (std::is_same_v<decltype(*(std::declval<It>()--)),
+                         typename it_traits::reference> == false) {
+        errors.add_error(
+            "Iterator expression *i-- have to return reference data type");
+      }
     }
 
-    return m_verification_result;
+    const bool is_satisfied = !errors.has_errors();
+    return std::make_pair(is_satisfied, errors.get_array());
   }
 };
 

@@ -2,37 +2,33 @@
 //
 //  SYCL 2020 Conformance Test Suite
 //
-//  Provides functions to verify Legacy output iterator requirements
+//  Provides class to verify conformity with named requirement LegacyOutputIterator
 //
 *******************************************************************************/
 
 #ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_OUTPUT_ITERATOR_H
 #define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_OUTPUT_ITERATOR_H
 
-#include "../common/common.h"
-
 #include "EqualityComparable.h"
 #include "LegacyIterator.h"
 #include "TypeTraits.h"
 #include "common.h"
 
-#include <type_traits>
-#include <utility>
-#include <vector>
-
-template <typename It>
-class legacy_output_iterator_requirement : requirement_verifier {
+class legacy_output_iterator_requirement {
  public:
-  bool check(const std::string type_name, bool silence_output = false) {
-    INFO("Verify named requirement Legacy Output Iterator for: " + type_name);
+  static constexpr size_t count_of_possible_errors =
+      legacy_iterator_requirement::count_of_possible_errors + 8;
 
-    STATIC_CHECK(!std::is_same_v<It, void>);
-    {
-      INFO(
-          "Iterator have to satisfy Legacy iterator requirement. Testing "
-          "type: " +
-          type_name);
-      verify(legacy_iterator_requirement<It>{}.check(type_name), true);
+ private:
+  error_messages_container<count_of_possible_errors> errors;
+
+ public:
+  template <typename It>
+  auto is_satisfied_for() {
+    auto legacy_iterator_res =
+        legacy_iterator_requirement{}.is_satisfied_for<It>();
+    if (legacy_iterator_res.first == false) {
+      errors.add_errors(legacy_iterator_res.second);
     }
 
     constexpr bool is_dereferenceable = type_traits::is_dereferenceable_v<It>;
@@ -43,63 +39,60 @@ class legacy_output_iterator_requirement : requirement_verifier {
     constexpr bool has_value_type_member =
         type_traits::has_field::value_type_v<It>;
 
-    {
-      INFO("Iterator have to be dereferenceable");
-      verify(is_dereferenceable, silence_output);
+    if (!is_dereferenceable) {
+      errors.add_error("Iterator have to implement operator*()");
     }
-    {
-      INFO("Iterator have to implement prefix and postfix increment operator");
-      verify(can_pre_increment, silence_output);
-      verify(can_post_increment, silence_output);
+
+    if (!can_pre_increment || !can_post_increment) {
+      errors.add_error("Iterator have to implement operator++() and operator++(int)");
     }
-    {
-      INFO("Iterator have to implement std::iterator_traits<It>::value_type");
-      verify(has_value_type_member, silence_output);
+
+    if (!has_value_type_member) {
+      errors.add_error("Iterator have to implement iterator_traits::value_type");
     }
 
     using it_traits = std::iterator_traits<It>;
 
     if constexpr (has_value_type_member && is_dereferenceable) {
-      INFO("Dereferenced iterator have to be assignable with value_t");
-      verify(std::is_assignable_v<decltype(*std::declval<It>()),
-                                  typename it_traits::value_type>,
-             silence_output);
+      if (std::is_assignable_v<decltype(*std::declval<It>()),
+                               typename it_traits::value_type> == false)
+        errors.add_error(
+            "Iterator have to return iterator_traits::value_type from "
+            "operator*()");
     }
 
     if constexpr (can_pre_increment) {
-      {
-        INFO(
-            "Iterator have to return reference after usage of prefix "
-            "increment "
-            "operator");
-        verify(std::is_same_v<decltype(++std::declval<It>()), It &>,
-               silence_output);
+      if (std::is_same_v<decltype(++std::declval<It>()), It&> == false) {
+        errors.add_error("Iterator have to return It& from operator++()");
       }
-      {
-        INFO("Iterator have to be convertible to const It after increment");
-        verify(std::is_convertible_v<decltype(++std::declval<It>()), const It>,
-               silence_output);
+      if (std::is_convertible_v<decltype(++std::declval<It>()), const It> ==
+          false) {
+        errors.add_error(
+            "Iterator have to return convertble to const It from operator++()");
       }
     }
 
     if constexpr (can_post_increment && is_dereferenceable &&
                   has_value_type_member) {
-      INFO(
-          "Iterator have to be assignable with value_t after increment and "
-          "dereferencing");
-      verify(std::is_assignable_v<decltype(*(std::declval<It>()++)),
-                                  typename it_traits::value_type>,
-             silence_output);
+      if (std::is_assignable_v<decltype(*(std::declval<It>()++)),
+                               typename it_traits::value_type> == false) {
+        errors.add_error(
+            "Iterator have to be assignable with iterator_traits::value_type "
+            "after useage of operator++() and operator*()");
+      }
     }
 
     if constexpr (is_dereferenceable && has_value_type_member) {
-      INFO("Iterator have to be assignable with value_t after dereferencing");
-      verify(std::is_assignable_v<decltype(*std::declval<It>()),
-                                  typename it_traits::value_type>,
-             silence_output);
+      if (std::is_assignable_v<decltype(*std::declval<It>()),
+                               typename it_traits::value_type> == false) {
+        errors.add_error(
+            "Iterator have to be assignable with iterator_traits::value_type "
+            "after useage of operator*()");
+      }
     }
 
-    return m_verification_result;
+    const bool is_satisfied = !errors.has_errors();
+    return std::make_pair(is_satisfied, errors.get_array());
   }
 };
 
