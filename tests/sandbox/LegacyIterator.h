@@ -64,7 +64,7 @@ class legacy_iterator_requirement {
     }
 
     if constexpr (type_traits::has_arithmetic::pre_increment_v<It>) {
-      if (std::is_same_v<decltype(++std::declval<It>()), It&> == false) {
+      if (std::is_same_v<decltype(++std::declval<It&>()), It&> == false) {
         errors.add_error(
             "Iterator have to return It& after useage of operator++()");
       }

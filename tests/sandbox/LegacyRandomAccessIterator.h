@@ -2,7 +2,8 @@
 //
 //  SYCL 2020 Conformance Test Suite
 //
-//  Provides class to verify conformity with named requirement LegacyRandomAccessIterator
+//  Provides class to verify conformity with named requirement
+LegacyRandomAccessIterator
 //
 *******************************************************************************/
 
@@ -116,15 +117,15 @@ class legacy_random_access_iterator_requirement {
                   has_subtraction_compound_operator) {
       // print_type<diff_t> p1;
       bool is_compund_ops_correct =
-          std::is_same_v<decltype(std::declval<It>() += std::declval<diff_t>()),
+          std::is_same_v<decltype(std::declval<It&>() += std::declval<diff_t>()),
                          It&>;
       is_compund_ops_correct &=
-          std::is_same_v<decltype(std::declval<It>() -= std::declval<diff_t>()),
+          std::is_same_v<decltype(std::declval<It&>() -= std::declval<diff_t>()),
                          It&>;
       is_compund_ops_correct &= std::is_same_v<
-          decltype(std::declval<It>() += -std::declval<diff_t>()), It&>;
+          decltype(std::declval<It&>() += -std::declval<diff_t>()), It&>;
       is_compund_ops_correct &= std::is_same_v<
-          decltype(std::declval<It>() -= -std::declval<diff_t>()), It&>;
+          decltype(std::declval<It&>() -= -std::declval<diff_t>()), It&>;
 
       if (!is_compund_ops_correct)
         errors.add_error(
@@ -177,26 +178,26 @@ class legacy_random_access_iterator_requirement {
       It a{};
       It b{};
       diff_t n = 1;
-      // If current iterator has iterator plus difference_type make b iterator
-      // differ than a iterator
+      // If current iterator has iterator plus difference_type make `b` iterator
+      // differ than `a` iterator
       if constexpr (has_iterator_plus_diff_type_operator) {
-        b + n;
-      }
-      using it_traits = std::iterator_traits<It>;
-      if constexpr (has_iterator_minus_iterator_operator && difference_type) {
-        if (std::is_same_v<decltype(a - b),
-                           typename it_traits::difference_type> == false) {
-          errors.add_error(
-              "operator-() of It instances have to return "
-              "iterator_traits::difference_type");
+        b = b + n;
+        using it_traits = std::iterator_traits<It>;
+        if constexpr (has_iterator_minus_iterator_operator && difference_type) {
+          if (std::is_same_v<decltype(b - a),
+                             typename it_traits::difference_type> == false) {
+            errors.add_error(
+                "operator-() of It instances have to return "
+                "iterator_traits::difference_type");
+          }
         }
-      }
-      if constexpr (has_subscript_operator && has_reference_member) {
-        if (std::is_convertible_v<decltype(a[0]),
-                                  typename it_traits::reference> == false) {
-          errors.add_error(
-              "operator[]() have to return convertible to "
-              "iterator_traits::reference");
+        if constexpr (has_subscript_operator && has_reference_member) {
+          if (std::is_convertible_v<decltype(a[0]),
+                                    typename it_traits::reference> == false) {
+            errors.add_error(
+                "operator[]() have to return convertible to "
+                "iterator_traits::reference");
+          }
         }
       }
     }

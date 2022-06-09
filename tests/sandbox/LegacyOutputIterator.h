@@ -62,10 +62,10 @@ class legacy_output_iterator_requirement {
     }
 
     if constexpr (can_pre_increment) {
-      if (std::is_same_v<decltype(++std::declval<It>()), It&> == false) {
+      if (std::is_same_v<decltype(++std::declval<It&>()), It&> == false) {
         errors.add_error("Iterator have to return It& from operator++()");
       }
-      if (std::is_convertible_v<decltype(++std::declval<It>()), const It> ==
+      if (std::is_convertible_v<decltype(++std::declval<It&>()), const It> ==
           false) {
         errors.add_error(
             "Iterator have to return convertble to const It from operator++()");
@@ -74,7 +74,7 @@ class legacy_output_iterator_requirement {
 
     if constexpr (can_post_increment && is_dereferenceable &&
                   has_value_type_member) {
-      if (std::is_assignable_v<decltype(*(std::declval<It>()++)),
+      if (std::is_assignable_v<decltype(*(std::declval<It&>()++)),
                                typename it_traits::value_type> == false) {
         errors.add_error(
             "Iterator have to be assignable with iterator_traits::value_type "

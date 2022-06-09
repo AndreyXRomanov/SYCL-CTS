@@ -88,7 +88,7 @@ class legacy_input_iterator_requirement {
     }
 
     if constexpr (can_pre_increment) {
-      if (std::is_same_v<decltype(++std::declval<It>()), It&> == false) {
+      if (std::is_same_v<decltype(++std::declval<It&>()), It&> == false) {
         errors.add_error("Iterator have to return It& from operator++()");
       }
     }
@@ -97,7 +97,7 @@ class legacy_input_iterator_requirement {
 
     if constexpr (is_dereferenceable && can_post_increment &&
                   has_value_type_member) {
-      if (std::is_convertible_v<decltype(*(std::declval<It>()++)),
+      if (std::is_convertible_v<decltype(*(std::declval<It&>()++)),
                                 typename it_traits::value_type> == false) {
         errors.add_error(
             "Iterator expression *i++ have to be convertible to "

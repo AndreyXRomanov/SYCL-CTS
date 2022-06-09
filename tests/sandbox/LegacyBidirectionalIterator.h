@@ -2,7 +2,8 @@
 //
 //  SYCL 2020 Conformance Test Suite
 //
-//  Provides class to verify conformity with named requirement LegacyBidirectionalIterator
+//  Provides class to verify conformity with named requirement
+//  LegacyBidirectionalIterator
 //
 *******************************************************************************/
 
@@ -49,7 +50,7 @@ class legacy_bidirectional_iterator_requirement {
         type_traits::has_field::value_type_v<It>;
 
     if constexpr (can_pre_increment && can_pre_decrement) {
-      if (std::is_same_v<decltype(--(++std::declval<It>())), It&> == false) {
+      if (std::is_same_v<decltype(--(++std::declval<It&>())), It&> == false) {
         errors.add_error("Iterator expression --(++i) have to return It& type");
       }
     }
@@ -61,23 +62,35 @@ class legacy_bidirectional_iterator_requirement {
     } else {
       if constexpr (can_pre_decrement && can_pre_increment &&
                     is_dereferenceable) {
-        It a = valid_iterator;
-        It b = a;
-        if ((--(++a) == a) == false) {
-          errors.add_error("Iterator expression --(++i) have to be equal to i");
+        {
+          It a = valid_iterator;
+          It saved_a = a;
+          ++a;
+          --a;
+          if ((a == saved_a) == false) {
+            errors.add_error(
+                "Iterator expression --(++i) have to be equal to i");
+          }
         }
-        ++a;
-        ++b;
-        if (--a == --b) {
-          if ((a == b) == false) {
-            errors.add_error("If --a == --b then a == b have to be true");
+        {
+          It a = valid_iterator;
+          It b = a;
+          ++a;
+          ++b;
+          if (--a == --b) {
+            if ((a == b) == false) {
+              errors.add_error("If --a == --b then a == b have to be true");
+            }
+          } else {
+            errors.add_error(
+                "--a have to be equal to --b, if they are copy of same object");
           }
         }
       }
     }
 
     if constexpr (can_pre_decrement) {
-      if (std::is_same_v<decltype(--(std::declval<It>())), It&> == false) {
+      if (std::is_same_v<decltype(--(std::declval<It&>())), It&> == false) {
         errors.add_error(
             "Iterator expression --i have to return It& data type");
       }
@@ -85,7 +98,7 @@ class legacy_bidirectional_iterator_requirement {
 
     if constexpr (can_post_increment && can_post_decrement &&
                   has_value_type_member) {
-      if (std::is_convertible_v<decltype((++std::declval<It>())--),
+      if (std::is_convertible_v<decltype((++std::declval<It&>())--),
                                 const It&> == false) {
         errors.add_error(
             "Iterator expression (i++)-- have to be convertible to const It&");
@@ -94,7 +107,7 @@ class legacy_bidirectional_iterator_requirement {
 
     if constexpr (can_post_decrement && is_dereferenceable &&
                   has_reference_member) {
-      if (std::is_same_v<decltype(*(std::declval<It>()--)),
+      if (std::is_same_v<decltype(*(std::declval<It&>()--)),
                          typename it_traits::reference> == false) {
         errors.add_error(
             "Iterator expression *i-- have to return reference data type");

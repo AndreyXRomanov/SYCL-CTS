@@ -72,14 +72,14 @@ class legacy_forward_iterator_requirement {
     }
 
     if constexpr (can_post_increment) {
-      if (std::is_same_v<decltype(std::declval<It>()++), It> == false) {
+      if (std::is_same_v<decltype(std::declval<It&>()++), It> == false) {
         errors.add_error("operator++(int) have to return It");
       }
     }
 
     if constexpr (can_post_increment && is_dereferenceable &&
                   has_reference_member) {
-      if (std::is_convertible_v<decltype(*(std::declval<It>()++)),
+      if (std::is_convertible_v<decltype(*(std::declval<It&>()++)),
                                 typename it_traits::reference> == false) {
         errors.add_error(
             "Expression *i++ have to be convertible to "

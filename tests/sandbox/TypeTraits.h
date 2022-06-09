@@ -125,7 +125,7 @@ struct addition : std::false_type {};
 template <typename T, typename RightOperandT>
 struct addition<
     T, RightOperandT,
-    std::void_t<decltype(std::declval<T>() += std::declval<RightOperandT>())>>
+    std::void_t<decltype(std::declval<T&>() += std::declval<RightOperandT>())>>
     : std::true_type {};
 
 template <typename T, typename RightOperandT = int>
@@ -140,7 +140,7 @@ struct subtraction : std::false_type {};
 template <typename T, typename RightOperandT>
 struct subtraction<
     T, RightOperandT,
-    std::void_t<decltype(std::declval<T>() -= std::declval<RightOperandT>())>>
+    std::void_t<decltype(std::declval<T&>() -= std::declval<RightOperandT>())>>
     : std::true_type {};
 
 template <typename T, typename RightOperandT = int>
@@ -188,7 +188,7 @@ template <typename T, typename = void>
 struct pre_increment : std::false_type {};
 
 template <typename T>
-struct pre_increment<T, std::void_t<decltype(++std::declval<T>())>>
+struct pre_increment<T, std::void_t<decltype(++std::declval<T&>())>>
     : std::true_type {};
 
 template <typename T>
@@ -201,7 +201,7 @@ template <typename T, typename = void>
 struct post_increment : std::false_type {};
 
 template <typename T>
-struct post_increment<T, std::void_t<decltype(std::declval<T>()++)>>
+struct post_increment<T, std::void_t<decltype(std::declval<T&>()++)>>
     : std::true_type {};
 
 template <typename T>
@@ -214,7 +214,7 @@ template <typename T, typename = void>
 struct post_decrement : std::false_type {};
 
 template <typename T>
-struct post_decrement<T, std::void_t<decltype(std::declval<T>()--)>>
+struct post_decrement<T, std::void_t<decltype(std::declval<T&>()--)>>
     : std::true_type {};
 
 template <typename T>
@@ -227,7 +227,7 @@ template <typename T, typename = void>
 struct pre_decrement : std::false_type {};
 
 template <typename T>
-struct pre_decrement<T, std::void_t<decltype(--(std::declval<T>()))>>
+struct pre_decrement<T, std::void_t<decltype(--(std::declval<T&>()))>>
     : std::true_type {};
 
 template <typename T>
