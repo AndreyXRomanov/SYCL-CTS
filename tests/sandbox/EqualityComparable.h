@@ -2,7 +2,8 @@
 //
 //  SYCL 2020 Conformance Test Suite
 //
-//  Provides class to verify conformity with named requirement EqualityComparable
+//  Provides class to verify conformity with named requirement
+//  EqualityComparable
 //
 *******************************************************************************/
 
@@ -14,16 +15,16 @@
 
 class equality_comparable_requirement {
  public:
-  static constexpr size_t count_of_possible_errors = 4;
+  static constexpr size_t count_of_possible_errors = 5;
 
  private:
-  error_messages_container<count_of_possible_errors> errors;
+  error_messages_container<count_of_possible_errors> m_errors;
 
  public:
   template <typename It>
   auto is_satisfied_for() {
     if (!type_traits::has_comparison::is_equal_v<It>) {
-      errors.add_error("Doesn't have implemented operator==()");
+      m_errors.add_error("Doesn't have implemented operator==()");
     }
 
     // It will delete branch from code in compile time to not fail a compilation
@@ -36,7 +37,7 @@ class equality_comparable_requirement {
       const It const_c;
 
       if (!(a == b) || !(b == a) || !(b == c) || !(a == c)) {
-        errors.add_error(
+        m_errors.add_error(
             "Non-const copies of one object doesn't equal to each other equal "
             "during comparing");
       }
@@ -45,14 +46,14 @@ class equality_comparable_requirement {
           (!std::is_convertible_v<decltype((b == a)), bool>) ||
           (!std::is_convertible_v<decltype((b == c)), bool>) ||
           (!std::is_convertible_v<decltype((a == c)), bool>)) {
-        errors.add_error(
+        m_errors.add_error(
             "Non-const copies of one object doesn't return convertible to bool "
             "value after comparing");
       }
 
       if (!(const_a == const_b) || !(const_b == const_a) ||
           !(const_b == const_c) || !(const_a == const_c)) {
-        errors.add_error(
+        m_errors.add_error(
             "Const copies of one object doesn't equal to each other equal "
             "during comparing");
       }
@@ -61,14 +62,14 @@ class equality_comparable_requirement {
           (!std::is_convertible_v<decltype((const_b == const_c)), bool>) ||
           (!std::is_convertible_v<decltype((const_a == const_c)), bool>) ||
           (!std::is_convertible_v<decltype((const_b == const_a)), bool>)) {
-        errors.add_error(
+        m_errors.add_error(
             "Const copies of one object doesn't return convertible to bool "
             "value after comparing");
       }
     }
 
-    const bool is_satisfied = !errors.has_errors();
-    return std::make_pair(is_satisfied, errors.get_array());
+    const bool is_satisfied = !m_errors.has_errors();
+    return std::make_pair(is_satisfied, m_errors.get_array());
   }
 };
 

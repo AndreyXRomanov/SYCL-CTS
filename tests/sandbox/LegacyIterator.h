@@ -17,65 +17,66 @@ class legacy_iterator_requirement {
   static constexpr size_t count_of_possible_errors = 12;
 
  private:
-  error_messages_container<count_of_possible_errors> errors;
+  error_messages_container<count_of_possible_errors> m_errors;
 
  public:
   template <typename It>
   auto is_satisfied_for() {
     if (std::is_copy_constructible_v<It> == false) {
-      errors.add_error("Iterator have to be copy constructable");
+      m_errors.add_error("Iterator have to be copy constructable");
     }
 
     if (std::is_copy_assignable_v<It> == false) {
-      errors.add_error("Iterator have to be copy assignable");
+      m_errors.add_error("Iterator have to be copy assignable");
     }
 
     if (std::is_destructible_v<It> == false) {
-      errors.add_error("Iterator have to be destructible");
+      m_errors.add_error("Iterator have to be destructible");
     }
 
     if (std::is_swappable_v<It> == false) {
-      errors.add_error("Iterator have to be swappable");
+      m_errors.add_error("Iterator have to be swappable");
     }
 
     if (type_traits::has_field::value_type_v<It> == false) {
-      errors.add_error("Iterator doesn't have value_type member typedef");
+      m_errors.add_error("Iterator doesn't have value_type member typedef");
     }
 
     if (type_traits::has_field::difference_type_v<It> == false) {
-      errors.add_error("Iterator doesn't have difference_type member typedef");
+      m_errors.add_error(
+          "Iterator doesn't have difference_type member typedef");
     }
 
     if (type_traits::has_field::reference_v<It> == false) {
-      errors.add_error("Iterator doesn't have reference member typedef");
+      m_errors.add_error("Iterator doesn't have reference member typedef");
     }
 
     if (type_traits::has_field::pointer_v<It> == false) {
-      errors.add_error("Iterator doesn't have pointer member typedef");
+      m_errors.add_error("Iterator doesn't have pointer member typedef");
     }
 
     if (type_traits::has_field::iterator_category_v<It> == false) {
-      errors.add_error(
+      m_errors.add_error(
           "Iterator doesn't have iterator_category member typedef");
     }
 
     if (type_traits::has_arithmetic::pre_increment_v<It> == false) {
-      errors.add_error("Iterator doesn't have implemented operator++()");
+      m_errors.add_error("Iterator doesn't have implemented operator++()");
     }
 
     if constexpr (type_traits::has_arithmetic::pre_increment_v<It>) {
       if (std::is_same_v<decltype(++std::declval<It&>()), It&> == false) {
-        errors.add_error(
+        m_errors.add_error(
             "Iterator have to return It& after useage of operator++()");
       }
     }
 
     if (type_traits::is_dereferenceable_v<It> == false) {
-      errors.add_error("Iterator doesn't have implemented operator*()");
+      m_errors.add_error("Iterator doesn't have implemented operator*()");
     }
 
-    const bool is_satisfied = !errors.has_errors();
-    return std::make_pair(is_satisfied, errors.get_array());
+    const bool is_satisfied = !m_errors.has_errors();
+    return std::make_pair(is_satisfied, m_errors.get_array());
   }
 };
 
