@@ -152,7 +152,8 @@ TEST_CASE("Legacy bidirectional iterator check") {
   SECTION("std::vector iterator") {
     std::vector v{1, 2, 3, 4, 5};
     auto res =
-        legacy_bidirectional_iterator_requirement{}.is_satisfied_for<vec_it>(v.begin(), v.size());
+        legacy_bidirectional_iterator_requirement{}.is_satisfied_for<vec_it>(
+            v.begin(), v.size());
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
         const bool requirement_not_satisfied = false;
@@ -166,8 +167,8 @@ TEST_CASE("Legacy bidirectional iterator check") {
   SECTION("user-defined iterator") {
     LegacyBidirectionalIterator v1{1, 2, 3, 4, 5};
     auto res =
-        legacy_bidirectional_iterator_requirement{}.is_satisfied_for<LegacyBidirectionalIterator>(
-            v1, v1.size());
+        legacy_bidirectional_iterator_requirement{}
+            .is_satisfied_for<LegacyBidirectionalIterator>(v1, v1.size());
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
         const bool requirement_not_satisfied = false;
@@ -183,8 +184,8 @@ TEST_CASE("Legacy bidirectional iterator check") {
 TEST_CASE("Legacy random access iterator check") {
   SECTION("std::vector iterator") {
     std::vector v{1, 2, 3, 4, 5};
-    auto res =
-        legacy_random_access_iterator_requirement{}.is_satisfied_for<vec_it>(v.begin(), v.size());
+    auto res = legacy_random_access_iterator_requirement{}.is_satisfied_for(
+        v.begin(), v.size());
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
         const bool requirement_not_satisfied = false;
@@ -197,9 +198,8 @@ TEST_CASE("Legacy random access iterator check") {
   }
   SECTION("user-defined iterator") {
     LegacyRandomAccessIterator v1{1, 2, 3, 4, 5};
-    auto res =
-        legacy_random_access_iterator_requirement{}.is_satisfied_for<LegacyRandomAccessIterator>(
-            v1, v1.size());
+    auto res = legacy_random_access_iterator_requirement{}
+                   .is_satisfied_for<LegacyRandomAccessIterator>(v1, v1.size());
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
         const bool requirement_not_satisfied = false;
@@ -208,6 +208,42 @@ TEST_CASE("Legacy random access iterator check") {
           CHECK(requirement_not_satisfied);
         }
       }
+    }
+  }
+}
+
+TEST_CASE("Testing in kernel") {
+  using namespace sycl_cts;
+  auto q = util::get_cts_object::queue();
+  constexpr size_t size_of_res_array =
+      legacy_random_access_iterator_requirement::count_of_possible_errors;
+  std::string_view errors[size_of_res_array];
+  {
+    sycl::buffer<std::string_view, 1> res_buf(errors,
+                                              sycl::range(size_of_res_array));
+    q.submit([&](sycl::handler& cgh) {
+      auto acc = res_buf.get_access<sycl::access_mode::write>(cgh);
+
+      cgh.single_task([=] {
+        std::array<int, 5> arr = {1, 2, 3, 4, 5};
+        auto res = legacy_random_access_iterator_requirement{}.is_satisfied_for(
+            arr.begin(), arr.size());
+        if (!res.first) {
+          for (int i = 0; i < size_of_res_array; ++i) {
+            if (res.second[i] != "") {
+              acc[i] = res.second[i];
+            }
+          }
+        }
+      });
+    });
+    q.wait_and_throw();
+  }
+  const bool requirement_not_satisfied = true;
+  for (size_t i = 0; i < size_of_res_array; ++i) {
+    if (errors[i] != "") {
+      INFO(errors[i]);
+      CHECK(requirement_not_satisfied);
     }
   }
 }
