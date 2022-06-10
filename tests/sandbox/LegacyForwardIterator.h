@@ -15,8 +15,16 @@
 #include "TypeTraits.h"
 #include "common.h"
 
+/**
+ * @brief Class helps to verify conformity to LegacyForwardIterator named
+ * requirement
+ *
+ */
 class legacy_forward_iterator_requirement {
  public:
+  // Will be used as size of container for error messages
+  // Value should be equal to the number of add_error invocations
+  // Don't forget to update this value if there is any changes in class
   static constexpr size_t count_of_possible_errors =
       legacy_input_iterator_requirement::count_of_possible_errors +
       legacy_output_iterator_requirement::count_of_possible_errors + 10;
@@ -25,6 +33,14 @@ class legacy_forward_iterator_requirement {
   error_messages_container<count_of_possible_errors> m_errors;
 
  public:
+  /**
+   * @brief Member function preform different checks for the requirement
+   * verification
+   *
+   * @tparam It Type of iterator for verification
+   * @return std::pair<bool,array<string_view>> First represents
+   * satisfaction of the requirement. Second contains error messages
+   */
   template <typename It>
   auto is_satisfied_for(It valid_iterator, const size_t container_size) {
     auto legacy_input_iterator_res =
@@ -61,13 +77,13 @@ class legacy_forward_iterator_requirement {
         if (std::is_const_v<typename it_traits::reference> == true) {
           m_errors.add_error(
               "Provided iterator satisfy to LegacyOutputIterator "
-              "requirement. Iterator reference have to be non const");
+              "requirement. iterator_traits::reference have to be non const");
         }
       } else {
         if (std::is_const_v<typename it_traits::reference> == false) {
           m_errors.add_error(
               "Provided iterator not satisfy to LegacyOutputIterator "
-              "requirement. Iterator reference have to be const");
+              "requirement. iterator_traits::reference have to be const");
         }
       }
     }

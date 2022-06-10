@@ -125,6 +125,7 @@ struct addition : std::false_type {};
 template <typename T, typename RightOperandT>
 struct addition<
     T, RightOperandT,
+    // Need reference here to handle rval of native C++ types like int
     std::void_t<decltype(std::declval<T&>() += std::declval<RightOperandT>())>>
     : std::true_type {};
 
@@ -140,6 +141,7 @@ struct subtraction : std::false_type {};
 template <typename T, typename RightOperandT>
 struct subtraction<
     T, RightOperandT,
+    // Need reference here to handle rval of native C++ types like int
     std::void_t<decltype(std::declval<T&>() -= std::declval<RightOperandT>())>>
     : std::true_type {};
 
@@ -188,6 +190,7 @@ template <typename T, typename = void>
 struct pre_increment : std::false_type {};
 
 template <typename T>
+// Need reference here to handle rval of native C++ types like int
 struct pre_increment<T, std::void_t<decltype(++std::declval<T&>())>>
     : std::true_type {};
 
@@ -201,6 +204,7 @@ template <typename T, typename = void>
 struct post_increment : std::false_type {};
 
 template <typename T>
+// Need reference here to handle rval of native C++ types like int
 struct post_increment<T, std::void_t<decltype(std::declval<T&>()++)>>
     : std::true_type {};
 
@@ -214,6 +218,7 @@ template <typename T, typename = void>
 struct post_decrement : std::false_type {};
 
 template <typename T>
+// Need reference here to handle rval of native C++ types like int
 struct post_decrement<T, std::void_t<decltype(std::declval<T&>()--)>>
     : std::true_type {};
 
@@ -227,7 +232,8 @@ template <typename T, typename = void>
 struct pre_decrement : std::false_type {};
 
 template <typename T>
-struct pre_decrement<T, std::void_t<decltype(--(std::declval<T&>()))>>
+// Need reference here to handle rval of native C++ types like int
+struct pre_decrement<T, std::void_t<decltype(--std::declval<T&>())>>
     : std::true_type {};
 
 template <typename T>

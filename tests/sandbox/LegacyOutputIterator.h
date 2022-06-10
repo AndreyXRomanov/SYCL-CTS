@@ -15,8 +15,16 @@
 #include "TypeTraits.h"
 #include "common.h"
 
+/**
+ * @brief Class helps to verify conformity to LegacyOutputIterator named
+ * requirement
+ *
+ */
 class legacy_output_iterator_requirement {
  public:
+  // Will be used as size of container for error messages
+  // Value should be equal to the number of add_error invocations
+  // Don't forget to update this value if there is any changes in class
   static constexpr size_t count_of_possible_errors =
       legacy_iterator_requirement::count_of_possible_errors + 8;
 
@@ -24,6 +32,14 @@ class legacy_output_iterator_requirement {
   error_messages_container<count_of_possible_errors> m_errors;
 
  public:
+  /**
+   * @brief Member function preform different checks for the requirement
+   * verification
+   *
+   * @tparam It Type of iterator for verification
+   * @return std::pair<bool,array<string_view>> First represents
+   * satisfaction of the requirement. Second contains error messages
+   */
   template <typename It>
   auto is_satisfied_for() {
     auto legacy_iterator_res =

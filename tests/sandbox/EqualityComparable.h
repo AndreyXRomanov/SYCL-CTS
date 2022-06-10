@@ -13,28 +13,44 @@
 #include "TypeTraits.h"
 #include "common.h"
 
+/**
+ * @brief Class helps to verify conformity to EqualityComparable named
+ * requirement
+ *
+ */
 class equality_comparable_requirement {
  public:
+  // Will be used as size of container for error messages
+  // Value should be equal to the number of add_error invocations
+  // Don't forget to update this value if there is any changes in class
   static constexpr size_t count_of_possible_errors = 5;
 
  private:
   error_messages_container<count_of_possible_errors> m_errors;
 
  public:
-  template <typename It>
+  /**
+   * @brief Member function preform different checks for the requirement
+   * verification
+   *
+   * @tparam T Type for verification
+   * @return std::pair<bool,array<string_view>> First represents
+   * satisfaction of the requirement. Second contains error messages
+   */
+  template <typename T>
   auto is_satisfied_for() {
-    if (!type_traits::has_comparison::is_equal_v<It>) {
+    if (!type_traits::has_comparison::is_equal_v<T>) {
       m_errors.add_error("Doesn't have implemented operator==()");
     }
 
     // It will delete branch from code in compile time to not fail a compilation
-    if constexpr (type_traits::has_comparison::is_equal_v<It>) {
-      It a;
-      It b;
-      It c;
-      const It const_a;
-      const It const_b;
-      const It const_c;
+    if constexpr (type_traits::has_comparison::is_equal_v<T>) {
+      T a;
+      T b;
+      T c;
+      const T const_a;
+      const T const_b;
+      const T const_c;
 
       if (!(a == b) || !(b == a) || !(b == c) || !(a == c)) {
         m_errors.add_error(
