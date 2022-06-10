@@ -1,4 +1,5 @@
 #include "../common/common.h"
+#include "../common/disabled_for_test_case.h"
 #include <iostream>
 #include <vector>
 
@@ -212,7 +213,8 @@ TEST_CASE("Legacy random access iterator check") {
   }
 }
 
-TEST_CASE("Testing in kernel") {
+DISABLED_FOR_TEST_CASE(ComputeCpp)
+("Testing in kernel")({
   using namespace sycl_cts;
   auto q = util::get_cts_object::queue();
   constexpr size_t size_of_res_array =
@@ -246,4 +248,4 @@ TEST_CASE("Testing in kernel") {
       CHECK(requirement_not_satisfied);
     }
   }
-}
+});
