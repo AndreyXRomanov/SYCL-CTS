@@ -214,7 +214,7 @@ TEST_CASE("Legacy random access iterator check") {
 }
 
 DISABLED_FOR_TEST_CASE(ComputeCpp)
-("Testing in kernel")({
+("Testing in kernel", "[]")({
   using namespace sycl_cts;
   auto q = util::get_cts_object::queue();
   constexpr size_t size_of_res_array =
