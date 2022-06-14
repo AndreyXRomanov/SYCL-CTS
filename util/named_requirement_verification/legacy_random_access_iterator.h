@@ -10,11 +10,10 @@
 #ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_RANDOM_ACCESS_ITERATOR_H
 #define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_RANDOM_ACCESS_ITERATOR_H
 
-#include "../../util/type_traits.h"
-
-#include "LegacyBidirectionalIterator.h"
-#include "TypeTraits.h"
 #include "common.h"
+#include "legacy_bidirectional_iterator.h"
+
+namespace named_requirement_verification {
 
 /**
  * @brief Class helps to verify conformity to LegacyRandomAccessIterator named
@@ -74,8 +73,7 @@ class legacy_random_access_iterator_requirement {
         type_traits::has_comparison::greater_or_equal_v<It>;
     constexpr bool has_less_or_equal_operator =
         type_traits::has_comparison::less_or_equal_v<It>;
-    constexpr bool has_subscript_operator =
-        type_traits::has_subscript_operator_v<It>;
+    constexpr bool has_subscript_operator = has_subscript_operator_v<It>;
 
     constexpr bool has_reference_member =
         type_traits::has_field::reference_v<It>;
@@ -252,5 +250,6 @@ class legacy_random_access_iterator_requirement {
     return std::make_pair(is_satisfied, m_errors.get_array());
   }
 };
+}  // namespace named_requirement_verification
 
 #endif  // __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_RANDOM_ACCESS_ITERATOR_H

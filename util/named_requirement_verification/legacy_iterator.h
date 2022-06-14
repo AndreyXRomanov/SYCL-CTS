@@ -9,8 +9,9 @@
 #ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_ITERATOR_H
 #define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_ITERATOR_H
 
-#include "TypeTraits.h"
 #include "common.h"
+
+namespace named_requirement_verification {
 
 /**
  * @brief Class helps to verify conformity to LegacyIterator named
@@ -87,7 +88,7 @@ class legacy_iterator_requirement {
       }
     }
 
-    if (type_traits::is_dereferenceable_v<It> == false) {
+    if (is_dereferenceable_v<It> == false) {
       m_errors.add_error("Iterator doesn't have implemented operator*()");
     }
 
@@ -95,5 +96,6 @@ class legacy_iterator_requirement {
     return std::make_pair(is_satisfied, m_errors.get_array());
   }
 };
+}  // namespace named_requirement_verification
 
 #endif  // __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_ITERATOR_H

@@ -10,10 +10,11 @@
 #ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_FORWARD_ITERATOR_H
 #define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_FORWARD_ITERATOR_H
 
-#include "LegacyInputIterator.h"
-#include "LegacyOutputIterator.h"
-#include "TypeTraits.h"
 #include "common.h"
+#include "legacy_input_iterator.h"
+#include "legacy_output_iterator.h"
+
+namespace named_requirement_verification {
 
 /**
  * @brief Class helps to verify conformity to LegacyForwardIterator named
@@ -49,7 +50,7 @@ class legacy_forward_iterator_requirement {
       m_errors.add_errors(legacy_input_iterator_res.second);
     }
 
-    constexpr bool is_dereferenceable = type_traits::is_dereferenceable_v<It>;
+    constexpr bool is_dereferenceable = is_dereferenceable_v<It>;
     constexpr bool can_pre_increment =
         type_traits::has_arithmetic::pre_increment_v<It>;
     constexpr bool can_post_increment =
@@ -158,5 +159,6 @@ class legacy_forward_iterator_requirement {
     return std::make_pair(is_satisfied, m_errors.get_array());
   }
 };
+}  // namespace named_requirement_verification
 
 #endif  // __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_FORWARD_ITERATOR_H

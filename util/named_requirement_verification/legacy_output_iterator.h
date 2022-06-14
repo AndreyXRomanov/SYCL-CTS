@@ -10,10 +10,10 @@
 #ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_OUTPUT_ITERATOR_H
 #define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_OUTPUT_ITERATOR_H
 
-#include "EqualityComparable.h"
-#include "LegacyIterator.h"
-#include "TypeTraits.h"
 #include "common.h"
+#include "legacy_iterator.h"
+
+namespace named_requirement_verification {
 
 /**
  * @brief Class helps to verify conformity to LegacyOutputIterator named
@@ -48,7 +48,7 @@ class legacy_output_iterator_requirement {
       m_errors.add_errors(legacy_iterator_res.second);
     }
 
-    constexpr bool is_dereferenceable = type_traits::is_dereferenceable_v<It>;
+    constexpr bool is_dereferenceable = is_dereferenceable_v<It>;
     constexpr bool can_pre_increment =
         type_traits::has_arithmetic::pre_increment_v<It>;
     constexpr bool can_post_increment =
@@ -114,5 +114,6 @@ class legacy_output_iterator_requirement {
     return std::make_pair(is_satisfied, m_errors.get_array());
   }
 };
+}  // namespace named_requirement_verification
 
 #endif  // __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_LEGACY_OUTPUT_ITERATOR_H

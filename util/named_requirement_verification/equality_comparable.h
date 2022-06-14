@@ -10,8 +10,9 @@
 #ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_EQUALITY_COMPARABLE_H
 #define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_EQUALITY_COMPARABLE_H
 
-#include "TypeTraits.h"
 #include "common.h"
+
+namespace named_requirement_verification {
 
 /**
  * @brief Class helps to verify conformity to EqualityComparable named
@@ -88,5 +89,6 @@ class equality_comparable_requirement {
     return std::make_pair(is_satisfied, m_errors.get_array());
   }
 };
+}  // namespace named_requirement_verification
 
 #endif  // __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_EQUALITY_COMPARABLE_H

@@ -9,12 +9,13 @@
 #ifndef __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_COMMON_H
 #define __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_COMMON_H
 
-#include "../common/common.h"
+#include "../type_traits.h"
 
 #include <array>
 #include <string_view>
-#include <type_traits>
 #include <utility>
+
+namespace named_requirement_verification {
 
 /**
  * @brief Class for storing error messages during requirements verification
@@ -67,5 +68,6 @@ class error_messages_container {
     return m_error_msgs_container;
   }
 };
+}  // namespace named_requirement_verification
 
 #endif  // __SYCLCTS_TESTS_ITERATOR_REQUIREMENTS_COMMON_H
