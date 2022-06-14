@@ -1,17 +1,20 @@
-#include "../common/common.h"
-#include "../common/disabled_for_test_case.h"
 #include <iostream>
 #include <vector>
 
-#include "EqualityComparable.h"
-#include "LegacyBidirectionalIterator.h"
-#include "LegacyForwardIterator.h"
-#include "LegacyInputIterator.h"
-#include "LegacyIterator.h"
-#include "LegacyOutputIterator.h"
-#include "LegacyRandomAccessIterator.h"
+#include "../common/common.h"
+#include "../common/disabled_for_test_case.h"
+
+#include "../../util/named_requirement_verification/equality_comparable.h"
+#include "../../util/named_requirement_verification/legacy_bidirectional_iterator.h"
+#include "../../util/named_requirement_verification/legacy_forward_iterator.h"
+#include "../../util/named_requirement_verification/legacy_input_iterator.h"
+#include "../../util/named_requirement_verification/legacy_iterator.h"
+#include "../../util/named_requirement_verification/legacy_output_iterator.h"
+#include "../../util/named_requirement_verification/legacy_random_access_iterator.h"
 
 #include "user_defined_iterators.h"
+
+using namespace named_requirement_verification;
 
 class EqualOpImplemented {
  public:
@@ -30,20 +33,15 @@ TEST_CASE("Equal operator") {
   CHECK(type_traits::has_comparison::is_equal_v<vec_it>);
 }
 
-TEST_CASE("Equality comparable check") {
-  std::vector v{1, 2, 3, 4, 5};
-  // equality_comparable_requirement<vec_it>{}.check("vector<int>::iterator");
-}
-
 TEST_CASE("Legacy iterator check") {
   SECTION("std::vector iterator") {
     auto res = legacy_iterator_requirement{}.is_satisfied_for<vec_it>();
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -52,10 +50,10 @@ TEST_CASE("Legacy iterator check") {
     auto res = legacy_iterator_requirement{}.is_satisfied_for<LegacyIterator>();
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -67,10 +65,10 @@ TEST_CASE("Legacy input iterator check") {
     auto res = legacy_input_iterator_requirement{}.is_satisfied_for<vec_it>();
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -80,10 +78,10 @@ TEST_CASE("Legacy input iterator check") {
                    .is_satisfied_for<LegacyInputIterator>();
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -95,10 +93,10 @@ TEST_CASE("Legacy output iterator check") {
     auto res = legacy_output_iterator_requirement{}.is_satisfied_for<vec_it>();
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -108,10 +106,10 @@ TEST_CASE("Legacy output iterator check") {
                    .is_satisfied_for<LegacyOutputIterator>();
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -125,10 +123,10 @@ TEST_CASE("Legacy forward iterator check") {
         v.begin(), v.size());
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -139,10 +137,10 @@ TEST_CASE("Legacy forward iterator check") {
                    .is_satisfied_for<LegacyForwardIterator>(v1, v1.size());
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -157,10 +155,10 @@ TEST_CASE("Legacy bidirectional iterator check") {
             v.begin(), v.size());
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -172,10 +170,10 @@ TEST_CASE("Legacy bidirectional iterator check") {
             .is_satisfied_for<LegacyBidirectionalIterator>(v1, v1.size());
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -189,10 +187,10 @@ TEST_CASE("Legacy random access iterator check") {
         v.begin(), v.size());
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -203,10 +201,10 @@ TEST_CASE("Legacy random access iterator check") {
                    .is_satisfied_for<LegacyRandomAccessIterator>(v1, v1.size());
     if (!res.first) {
       for (size_t i = 0; i < res.second.size(); ++i) {
-        const bool requirement_not_satisfied = false;
+        const bool false_to_fail_test = false;
         if (res.second[i] != "") {
           INFO(res.second[i]);
-          CHECK(requirement_not_satisfied);
+          CHECK(false_to_fail_test);
         }
       }
     }
@@ -214,7 +212,7 @@ TEST_CASE("Legacy random access iterator check") {
 }
 
 DISABLED_FOR_TEST_CASE(ComputeCpp)
-("Testing in kernel", "[]")({
+("Testing in kernel", "[kernel]")({
   using namespace sycl_cts;
   auto q = util::get_cts_object::queue();
   constexpr size_t size_of_res_array =
@@ -241,11 +239,11 @@ DISABLED_FOR_TEST_CASE(ComputeCpp)
     });
     q.wait_and_throw();
   }
-  const bool requirement_not_satisfied = true;
+  const bool false_to_fail_test = false;
   for (size_t i = 0; i < size_of_res_array; ++i) {
     if (errors[i] != "") {
       INFO(errors[i]);
-      CHECK(requirement_not_satisfied);
+      CHECK(false_to_fail_test);
     }
   }
 });
