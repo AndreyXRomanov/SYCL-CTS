@@ -58,7 +58,7 @@ class error_messages_container {
   void add_errors(const std::array<std::string_view, N> msgs) {
     for (size_t i = 0; i < msgs.size(); ++i) {
       // Avoid copying of empty messages
-      if (msgs[i] != "") {
+      if (!msgs[i].empty()) {
         add_error(msgs[i]);
       }
     }
