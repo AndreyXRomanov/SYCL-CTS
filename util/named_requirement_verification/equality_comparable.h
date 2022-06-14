@@ -16,7 +16,7 @@ namespace named_requirement_verification {
 
 /**
  * @brief Class helps to verify conformity to EqualityComparable named
- * requirement
+ * requirement. Safe to use inside kernel with SYCL 2020.
  *
  */
 class equality_comparable_requirement {

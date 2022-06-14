@@ -17,7 +17,7 @@ namespace named_requirement_verification {
 
 /**
  * @brief Class helps to verify conformity to LegacyRandomAccessIterator named
- * requirement
+ * requirement. Safe to use inside kernel with SYCL 2020.
  *
  */
 class legacy_random_access_iterator_requirement {
@@ -25,6 +25,8 @@ class legacy_random_access_iterator_requirement {
   // Will be used as size of container for error messages
   // Value should be equal to the number of add_error invocations
   // Don't forget to update this value if there is any changes in class
+  // As we also verify other requirements, we have to keep in mind that result
+  // of those verifications also increase size of container with messages
   static constexpr int count_of_possible_errors =
       legacy_bidirectional_iterator_requirement::count_of_possible_errors + 21;
 

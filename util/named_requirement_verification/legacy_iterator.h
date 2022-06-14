@@ -15,7 +15,7 @@ namespace named_requirement_verification {
 
 /**
  * @brief Class helps to verify conformity to LegacyIterator named
- * requirement
+ * requirement. Safe to use inside kernel with SYCL 2020.
  *
  */
 class legacy_iterator_requirement {

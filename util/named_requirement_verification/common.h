@@ -18,7 +18,8 @@
 namespace named_requirement_verification {
 
 /**
- * @brief Class for storing error messages during requirements verification
+ * @brief Class for storing error messages during requirements verification.
+ * Safe to use inside kernel with SYCL 2020.
  *
  * @tparam Size parameter used for allocation of std::array with
  * std::basic_string
@@ -31,6 +32,7 @@ class error_messages_container {
   std::array<std::basic_string_view<char>, Size> m_error_msgs_container;
   // Index for storing next error message
   size_t m_index = 0;
+  // Variable will be set to true if add_error was called
   bool m_has_errors = false;
 
  public:
@@ -50,12 +52,12 @@ class error_messages_container {
   }
 
   /**
-   * @brief Member function helps to array of errors messages
+   * @brief Member function helps to add array with errors messages
    */
   template <size_t N>
   void add_errors(const std::array<std::string_view, N> msgs) {
     for (size_t i = 0; i < msgs.size(); ++i) {
-      // Avoid coping of empty messages
+      // Avoid copying of empty messages
       if (msgs[i] != "") {
         add_error(msgs[i]);
       }

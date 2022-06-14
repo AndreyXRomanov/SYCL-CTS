@@ -18,7 +18,7 @@ namespace named_requirement_verification {
 
 /**
  * @brief Class helps to verify conformity to LegacyForwardIterator named
- * requirement
+ * requirement. Safe to use inside kernel with SYCL 2020.
  *
  */
 class legacy_forward_iterator_requirement {
@@ -26,6 +26,8 @@ class legacy_forward_iterator_requirement {
   // Will be used as size of container for error messages
   // Value should be equal to the number of add_error invocations
   // Don't forget to update this value if there is any changes in class
+  // As we also verify other requirements, we have to keep in mind that result
+  // of those verifications also increase size of container with messages
   static constexpr size_t count_of_possible_errors =
       legacy_input_iterator_requirement::count_of_possible_errors +
       legacy_output_iterator_requirement::count_of_possible_errors + 10;
